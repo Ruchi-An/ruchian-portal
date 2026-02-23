@@ -1,68 +1,110 @@
+/* スケジュールページ用の追加クラス */
+.commonContainer--schedule {
+  padding-bottom: 40px;
+}
+
+.commonHero.commonHero--schedule {
+  padding-bottom: 0;
+}
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  /* === カラーパレット === */
+  /* プライマリーカラー（青系ガラスモーフィズム） */
+  --color-primary: rgba(150, 200, 255, 0.8);
+  --color-primary-light: rgba(200, 230, 255, 0.6);
+  --color-primary-dark: rgba(100, 180, 255, 0.9);
+  
+  /* アクセントカラー（星・ハイライト） */
+  --color-accent: #fff453;
+  --color-accent-glow: rgba(250, 244, 127, 0.6);
+  
+  /* 背景・ガラス効果 */
+  --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+  --glass-bg-light: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.10));
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-border-strong: rgba(150, 200, 255, 0.5);
+  
+  /* テキストカラー */
+  --text-primary: #f7f9ff;
+  --text-secondary: rgba(255, 255, 255, 0.85);
+  --text-muted: rgba(255, 255, 255, 0.6);
+  
+  /* シャドウ */
+  --shadow-small: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.25);
+  --shadow-large: 0 12px 40px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 10px rgba(150, 200, 255, 0.5);
+  
+  /* ボーダーラディウス */
+  --radius-xs: 6px;
+  --radius-xs2: 8px;
+  --radius-small: 10px;
+  --radius-small2: 12px;
+  --radius-medium: 16px;
+  --radius-medium2: 20px;
+  --radius-large: 24px;
+  --radius-large2: 28px;
+  
+  /* スペーシング */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 48px;
+  
+  /* フォント設定 */
+  font-family: 'Segoe UI', 'M PLUS Rounded 1c', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
+  color: var(--text-primary);
+  background-color: #0a0e27;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+* {
+  box-sizing: border-box;
 }
+
+a {
+  font-weight: 600;
+  color: #b6c7ff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
 a:hover {
-  color: #535bf2;
+  color: #ffef8a;
+}
+
+html {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: transparent;
+}
+
+#root {
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
+/* スマホ用：丸みを抑える */
+@media (max-width: 768px) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+    --radius-xs: 4px;
+    --radius-xs2: 6px;
+    --radius-small: 8px;
+    --radius-small2: 10px;
+    --radius-medium: 12px;
+    --radius-medium2: 14px;
+    --radius-large: 16px;
+    --radius-large2: 20px;
   }
 }

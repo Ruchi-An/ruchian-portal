@@ -1,0 +1,266 @@
+/* ===============================
+   Scenario ページ固有のスタイル
+   共通スタイルは sections.css のグローバルクラスを使用
+   =============================== */
+
+/* ページレイアウトは共通クラスを直接使用: commonPage, commonHero等 */
+
+/* Scenario固有の微調整 */
+.hero {
+  padding-bottom: 0;
+}
+
+.container {
+  padding-bottom: 40px;
+}
+
+/* 検索・フィルター左右分割用 */
+.filterLayout {
+  display: flex;
+  justify-content: space-between;
+  gap: 2em;
+  margin: 1em 0 1em 0;
+}
+
+.filterSide {
+  flex: 1;
+  min-width: 220px;
+}
+
+@media (max-width: 800px) {
+  .filterLayout {
+    flex-direction: column;
+    gap: 1em;
+  }
+  .filterSide {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+/* 検索・フィルターの縦並び用 */
+.filterColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.7em;
+  position: relative;
+  min-width: 160px;
+  padding-top: 1.2em;
+}
+
+.filterRowItem {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  margin-bottom: 0.2em;
+}
+
+/* フィルタークローズボタン */
+.filterCloseBtn {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  background: rgba(180, 220, 255, 0.2);
+  border: 1px solid rgba(150, 200, 255, 0.5);
+  border-radius: var(--radius-small2);
+  color: rgba(255, 255, 255, 0.95);
+  font-size: clamp(1.2rem, 1.5vw, 1.5rem);
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.filterCloseBtn:hover {
+  background: rgba(180, 220, 255, 0.35);
+  border-color: rgba(150, 200, 255, 0.7);
+  transform: scale(1.1) rotate(90deg);
+}
+
+.filterCloseBtn:active {
+  transform: scale(0.95);
+}
+
+/* 検索・フィルターUI */
+.filterRow {
+  background: rgba(100, 149, 255, 0.15);
+  border: 2px solid var(--glass-border-strong);
+  border-radius: var(--radius-medium);
+  box-shadow:
+    var(--shadow-medium),
+    var(--shadow-small),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  align-items: flex-start;
+  font-size: clamp(0.7rem, 2vw, 1rem);
+}
+
+.filterRow label {
+  font-size: clamp(0.7rem, 2vw, 1rem);
+  color: #eaf6ff;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.01em;
+}
+
+.filterRow select,
+.filterRow input[type="text"] {
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.08));
+  color: #eaf6ff;
+  border: 1.5px solid rgba(255,255,255,0.22);
+  border-radius: var(--radius-small);
+  padding: 7px 14px;
+  font-size: clamp(0.7rem, 2vw, 1rem);
+  margin-left: 4px;
+  box-shadow: 0 1px 6px 0 rgba(120,180,255,0.10);
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.filterRow select option {
+  background: #2a4a7f;
+  color: #ffffff;
+  padding: 8px;
+}
+
+.filterRow select:focus,
+.filterRow input[type="text"]:focus {
+  border: 2px solid var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(255,211,77,0.18);
+}
+
+.filterRow button:not(.filterCloseBtn) {
+  background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-primary) 100%);
+  color: #222;
+  border: none;
+  border-radius: var(--radius-small);
+  padding: 9px 22px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 12px 0 rgba(255,211,77,0.13);
+  margin-left: 10px;
+  transition: background 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+}
+
+.filterRow button:not(.filterCloseBtn):hover {
+  background: linear-gradient(90deg, #ffe9a0 0%, #cbe6ff 100%);
+  box-shadow: 0 4px 24px 0 rgba(255,211,77,0.18);
+}
+
+.filterToggleBtn {
+  background: rgba(180, 220, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(150, 200, 255, 0.5);
+  border-radius: var(--radius-small);
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  margin-bottom: 2px;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.filterToggleBtn:hover {
+  background: rgba(180, 220, 255, 0.35);
+  border-color: rgba(150, 200, 255, 0.7);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.filterToggleBtn:active {
+  transform: translateY(0);
+}
+
+/* 表示モード切り替えボタン */
+.viewModeToggleBtn {
+  background: rgba(200, 150, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(180, 150, 255, 0.5);
+  border-radius: var(--radius-small);
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  white-space: nowrap;
+}
+
+.viewModeToggleBtn:hover {
+  background: rgba(200, 150, 255, 0.35);
+  border-color: rgba(180, 150, 255, 0.7);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.viewModeToggleBtn:active {
+  transform: translateY(0);
+}
+
+/* カードグリッド */
+.cardGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+/* コンパクトリスト（テーブル風） */
+.compactList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-top: var(--spacing-lg);
+}
+
+/* 空のメッセージ */
+.emptyMessage {
+  text-align: center;
+  padding: 40px 20px;
+  opacity: 0.6;
+  color: var(--text-muted);
+}
+
+.categoryTabContent {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.categoryTabIcon {
+  color: currentColor;
+  flex-shrink: 0;
+}
+
+.categoryTabLabel {
+  color: currentColor;
+}
+

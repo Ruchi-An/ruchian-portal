@@ -1,0 +1,184 @@
+/* ===== HeroSection Animation ===== */
+.heroSection {
+  min-height: 100vh; /* 画面いっぱいを基準にしつつ、内容が多いときは伸ばす */
+  display: grid;
+  place-items: start center; /* 横中央、縦は上寄せ */
+  color: #f7f9ff;
+  padding: max(80px, 10vh) 20px 40px; /* 上のマージンを確保しつつレスポンシブに */
+  overflow: hidden;
+  position: relative;
+  width: min(1280px, 100%);
+  margin: 0 auto;
+}
+
+/* 画像＋オーバーレイ用のラッパー */
+.heroImageWrap {
+  position: relative;
+  --wrapper-width: clamp(1px, 92vw, 1040px);
+  width: var(--wrapper-width);
+  margin: clamp(1px, 3vw, 64px) auto 16px;
+  container-type: inline-size; /* コンテナ幅に応じたcqw計算を有効化 */
+}
+
+.topHeroImage {
+  width: 100%;
+  height: auto; /* アスペクト比維持 */
+  display: block;
+  border-radius: 24px; /* セクションと揃える */
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.6),
+    0 0 40px rgba(255, 255, 255, 0.35);
+}
+
+/* 画像上に重ねるコンテンツ */
+.overlay {
+  position: absolute;
+  left: clamp(1px, 5.0cqw, 60px);
+  top: 50%;
+  transform: translateY(-60%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: min(90%, 520px);
+}
+
+@keyframes scheduleSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 予定カード */
+.scheduleLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(0.1rem, 5.0cqw, 5rem);
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  margin-bottom: 28px;
+  margin-top: 0;
+  text-shadow:
+    0 0 10px rgba(150, 200, 255, 0.55),
+    0 0 20px rgba(100, 180, 255, 0.45),
+    0 0 30px rgba(120, 200, 255, 0.35);
+}
+
+.scheduleLabelText {
+  opacity: 0.95;
+}
+
+.scheduleCard {
+  margin-top: 0;
+  padding: 16px 16px 10px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(100, 130, 255, 0.18), rgba(100, 130, 255, 0.05));
+  border: 1px solid rgba(250, 244, 127, 0.25);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25), inset 0 0 24px rgba(255,255,255,0.04);
+  opacity: 1;
+  transform: none;
+  width: clamp(210px, calc(var(--wrapper-width) * 0.4), 420px);
+  margin-right: auto;
+  margin-left: clamp(12px, 3.5cqw, 60px); /* 少し右へ寄せる */
+}
+
+.scheduleIcon {
+  color: var(--star-yellow);
+  text-shadow: 0 0 10px rgba(250,244,127,0.6);
+  font-size: 1.2rem;
+}
+
+.scheduleList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.scheduleItem {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.itemBody {
+  display: grid;
+  gap: 4px;
+}
+
+.itemTime {
+  font-size: clamp(0.6rem, 2.0cqw, 1.1rem);
+  opacity: 0.85;
+  letter-spacing: 0.02em;
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  justify-self: start; /* Gridの横伸びを防ぎ左寄せ */
+  width: fit-content; /* 文字幅にフィット */
+  white-space: nowrap; /* 改行で横に伸びないように */
+}
+
+.itemTitle {
+  font-weight: 800;
+  font-size: clamp(0.8rem, 2.8cqw, 1.3rem);
+  letter-spacing: 0.02em;
+}
+
+.itemNote {
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.emptyState {
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+/* 時間カテゴリ別ボーダー（カレンダーの色分けに準拠） */
+.time-morning {
+  border-color: rgb(100, 255, 100);
+  box-shadow: 0 0 8px rgba(100, 255, 100, 0.5);
+}
+
+.time-afternoon {
+  border-color: rgb(255, 165, 0);
+  box-shadow: 0 0 8px rgba(255, 165, 0, 0.5);
+}
+
+.time-evening {
+  border-color: rgb(100, 180, 255);
+  box-shadow: 0 0 8px rgba(100, 180, 255, 0.5);
+}
+
+.time-late-night {
+  border-color: rgb(180, 100, 255);
+  box-shadow: 0 0 8px rgba(180, 100, 255, 0.5);
+}
+
+.time-undefined {
+  border-color: rgb(200, 200, 200);
+  box-shadow: 0 0 6px rgba(200, 200, 200, 0.35);
+}
+
+/* スマホ表示ではコメントを非表示 */
+@media (max-width: 768px) {
+  .itemNote {
+    display: none;
+  }
+}
+

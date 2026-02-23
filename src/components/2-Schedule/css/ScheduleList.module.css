@@ -1,0 +1,301 @@
+/* カテゴリ絵文字に白い光を付与 */
+.emojiOutline {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+  border-radius: 6px;
+  padding: 2px 4px;
+}
+/* ====================================
+   TableList: 汎用テーブルリストコンポーネント
+   
+   使用方法:
+   - ColumnDef配列でカラムを定義
+   - gridTemplateColumnsでカラム幅を指定
+   - セル固有のスタイルはclassNameで外部から渡す
+   ==================================== */
+
+/* ====================================
+   コンテナ：外側のラッパー
+   ==================================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px 0 16px;
+}
+
+/* 空メッセージ */
+.emptyMessage {
+  text-align: center;
+  padding: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: clamp(0.7rem, 2vw, 1.0rem);
+  margin: 0;
+}
+
+/* ====================================
+   ラッパー：ヘッダーと行を含む内部コンテナ
+   ==================================== */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ====================================
+   ヘッダー：テーブルの列見出し
+   
+   注意:
+   - grid-template-columnsは親コンポーネントから渡される
+   - グラデーション背景で視覚的に区別
+   ==================================== */
+
+.header {
+  display: grid;
+  gap: 16px;
+  align-items: center;
+  padding-top: clamp(8px, 1.5vw, 12px);
+  padding-bottom: clamp(8px, 1.5vw, 12px);
+  padding-right: clamp(10px, 1.5vw, 24px);
+  padding-left: clamp(10px, 1.5vw, 24px);
+  background: linear-gradient(135deg, rgba(2, 31, 129, 0.5));
+  border: 2px solid rgba(150, 200, 255, 0.4);
+  border-radius: var(--radius-xs2) var(--radius-xs2) 0 0;
+  backdrop-filter: blur(10px);
+  font-size: clamp(0.65rem, 1.5vw, 1.0rem);
+  font-weight: 700;
+}
+
+/* ヘッダーセル：各列の見出し */
+.headerCell {
+  padding: 0 4px;
+  cursor: default;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ====================================
+   データ行：テーブルの各行
+   
+   注意:
+   - 各行はクリック可能でホバーエフェクト付き
+   - grid-template-columnsは親コンポーネントから渡されるllipsis;
+   ==================================== */
+
+/* 各データ行 */
+.row {
+  display: grid;
+  gap: 16px;
+  align-items: center;
+  padding-top: clamp(8px, 1.5vw, 12px);
+  padding-bottom: clamp(8px, 1.5vw, 12px);
+  padding-right: clamp(10px, 1.5vw, 24px);
+  padding-left: clamp(10px, 1.5vw, 50px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(155, 215, 255, 0.4));
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-xs2);
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+  color: rgba(220, 235, 255, 0.95);
+  cursor: pointer;
+}
+
+/* 最後の行：下部角丸 */
+.row:last-child {
+  border-radius: 0 0 var(--radius-xs2) var(--radius-xs2);
+}
+
+/* ホバー時：色とシャドウ変更 */
+.row:hover {
+  background: linear-gradient(135deg, rgba(150, 200, 255, 0.15), rgba(150, 200, 255, 0.08));
+  border-color: rgba(150, 200, 255, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+/* セル：各データセル（共通スタイル） */
+.cell {
+  padding: 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+}
+
+.categoryBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.categoryIcon {
+  color: #b6e0ff;
+}
+
+/* ====================================
+   配置クラス：セルの水平配置
+   
+   使用方法:
+   - ColumnDefのalignプロパティで指定
+   - 'left' | 'center' | 'right'
+  align-items: center;
+}
+
+/* ====================================
+   TableList: セルの配置
+   ==================================== */
+
+.align-left {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.align-center {
+  justify-content: center;
+  text-align: center;
+}
+
+.align-right {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+/* ================= サイドパネル ================= */
+
+/* サイドパネル本体 */
+.sidePanel {
+  background: linear-gradient(135deg, rgba(30,40,80,0.85), rgba(80,120,180,0.7));
+  border-left: 2px solid rgba(150,200,255,0.25);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 16px 12px 16px 12px;
+  min-width: 220px;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 2;
+  position: relative;
+  transition: width 0.2s, opacity 0.2s;
+}
+
+/* サイドパネル非表示 */
+.sidePanelClosed {
+  display: none !important;
+}
+
+/* サイドパネル開くボタン（絶対配置） */
+.sidePanelOpenButton {
+  position: absolute;
+  top: 30px;
+  right: 55px;
+  transform: translate(50%,-60%);
+  z-index: 10;
+  background: rgba(215, 235, 255, 0.425);
+  color: #ffffff;
+  font-size: clamp(0.5rem, 1.5vw, 1.0rem);
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  width: clamp(70px, 7vw, 100px);
+  height: clamp(10px, 5vw, 40px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.2s;
+}
+.sidePanelOpenButton:hover {
+  background: #fff;
+  color: #1a2340;
+}
+
+.sidePanelToggle {
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: #fff;
+  font-size: 0.95rem;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 8px;
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s;
+}
+.sidePanelToggle:hover {
+  background: rgba(150,200,255,0.18);
+}
+.sidePanelContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sidePanelTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #fff;
+  letter-spacing: 0.04em;
+}
+.undatedList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.undatedItem {
+  background: rgba(255,255,255,0.08);
+  border-radius: 6px;
+  padding: 7px 10px;
+  color: #eaf6ff;
+  font-size: 0.98rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.undatedItem:hover {
+  background: rgba(150,200,255,0.18);
+}
+.undatedTitle {
+  font-weight: 600;
+  font-size: 1.01em;
+}
+.undatedCategory {
+  font-size: 0.92em;
+  color: #b6e0ff;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.undatedCategoryIcon {
+  color: #b6e0ff;
+}
+
+.undatedCategoryLabel {
+  color: #b6e0ff;
+}
+
+@media (max-width: 1200px) {
+  .sidePanel,
+  .sidePanelOpenButton {
+    display: none !important;
+  }
+}

@@ -1,0 +1,64 @@
+/* ===============================
+   追加: Takanashi.tsxのインラインstyle移動分
+   =============================== */
+
+.takanashiContent {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.takanashiMessage {
+  opacity: 0.85;
+  margin-top: 8px;
+}
+.page {
+  min-height: 100vh;
+  color: #ffffff;
+  padding: 0 20px 96px;
+  background: transparent;
+}
+
+.hero {
+  min-height: auto;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 12px;
+  padding-top: 120px;
+  padding-bottom: 40px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-size: 2.2rem;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.titleIcon {
+  color: var(--star-yellow, #ffd34d);
+  text-shadow: 0 0 10px rgba(250, 244, 127, 0.6);
+  font-size: clamp(1.4rem, 4vw, 1.8rem);
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.5rem, 5vw, 4.0rem);
+  opacity: 0.95;
+  letter-spacing: 0.12em;
+  text-shadow:
+    0 0 10px rgba(150, 200, 255, 0.55),
+    0 0 20px rgba(100, 180, 255, 0.45),
+    0 0 30px rgba(120, 200, 255, 0.35);
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding-top: 100px;
+    padding-bottom: 30px;
+  }
+}

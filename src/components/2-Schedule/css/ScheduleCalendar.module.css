@@ -1,0 +1,690 @@
+/* ================================================
+   Schedule 共通スタイル定義
+   ================================================
+   このファイルは Schedule ページで使用する
+   共通 CSS モジュールです。以下のセクションに分かれています：
+   - ページレイアウト・ヒーロー
+   - カレンダー・カード
+   - ナビゲーション
+   - 凡例・カラー
+   - カレンダーグリッド・日付セル
+   - イベント要素
+   - 未定セクション
+   - テーブルセル（リスト表示）
+   - レスポンシブ
+   ================================================ */
+
+/* ====================================
+   ページレイアウト・ヒーローセクション
+   ==================================== */
+
+.page {
+  min-height: 100vh;
+  color: #ffffff;
+  padding: 0 20px 96px;
+  background: transparent;
+}
+
+.hero {
+  min-height: auto;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 12px;
+  padding-top: 120px;
+  padding-bottom: 40px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.5rem, 5vw, 4.0rem);
+  opacity: 0.95;
+  letter-spacing: 0.12em;
+  text-shadow:
+    0 0 10px rgba(150, 200, 255, 0.55),
+    0 0 20px rgba(100, 180, 255, 0.45),
+    0 0 30px rgba(120, 200, 255, 0.35);
+}
+
+.titleIcon {
+  color: var(--star-yellow, #ffd34d);
+  text-shadow: 0 0 10px rgba(250, 244, 127, 0.6);
+  font-size: clamp(1.4rem, 4vw, 1.8rem);
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 640px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.6;
+}
+
+/* ====================================
+   カレンダー・カード
+   ==================================== */
+
+.calendarHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.loadingMessage {
+  text-align: center;
+  padding: 2rem;
+}
+
+/* ====================================
+   ナビゲーション・コントロール
+   ==================================== */
+
+.dateNavigationContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.dateSelector {
+  padding: 8px 12px;
+  border-radius: var(--radius-small2);
+  border: 1px solid rgb(255, 255, 255);
+  background: rgba(175, 225, 255, 0.3);
+  color: #ffffff;
+  font-size: clamp(0.5rem, 1.5vw, 0.9rem);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.dateSelector:hover {
+  background: rgba(106, 134, 255, 0.466);
+  border-color: rgb(255, 255, 255);
+}
+
+.dateSelector:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 12px rgba(255, 200, 100, 0.3);
+}
+
+.dateSelector option {
+  background: #1a1a2e;
+  color: #ffffff;
+}
+
+.navButton {
+  padding: 8px 12px;
+  border-radius: var(--radius-small2);
+  border: 1px solid rgb(255, 255, 255);
+  background: rgba(175, 225, 255, 0.3);
+  color: #ffffff;
+  font-size: clamp(0.5rem, 1.5vw, 0.9rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.navButton:active {
+  transform: translateY(0);
+}
+
+/* ====================================
+   凡例・カラーインジケータ
+   ==================================== */
+
+.legendContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.legend {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.legendItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* 時間帯の凡例カラー */
+.legendMorning {
+  background: rgb(100, 255, 100);
+  box-shadow: 0 0 8px rgba(100, 255, 100, 0.6);
+}
+
+.legendAfternoon {
+  background: rgb(255, 255, 120);
+  box-shadow: 0 0 8px rgba(255, 255, 120, 0.6);
+}
+
+.legendEvening {
+  background: rgb(100, 160, 255);
+  box-shadow: 0 0 8px rgba(100, 160, 255, 0.6);
+}
+
+.legendLateNight {
+  background: rgb(180, 100, 255);
+  box-shadow: 0 0 8px rgba(180, 100, 255, 0.6);
+}
+
+.legendUndefined {
+  background: rgb(200, 200, 200);
+  box-shadow: 0 0 8px rgba(200, 200, 200, 0.4);
+}
+
+.legendText {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(0.7em, 2vw, 1.2rem);
+}
+
+/* ====================================
+   カレンダーグリッド・日付セル
+   ==================================== */
+
+.weekRow {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  margin: 10px 0 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.weekLabel {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: clamp(4px, 0.8vw, 8px);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 日付セルの基本スタイル */
+.dayCell {
+  position: relative;
+  min-height: clamp(70px, 12vw, 140px);
+  padding: clamp(2px, 1.0vw, 8px);
+  border-radius: 5px;
+  border: 1px solid #a4e2ff; /* 淡いシアンホワイト */
+  box-shadow:
+    0 0 8px #b3e6ff88,   /* 柔らかい青白グロー */
+    0 0 16px #a4e2ff44;
+  background: rgba(0, 10, 60, 0.7);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  text-align: center;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.dayCell:hover {
+  transform: translateY(-2px);
+}
+
+/* 各セルの状態スタイル */
+.today {
+  border-color: #fff453;
+  box-shadow:
+    0 0 16px #fff453,
+    0 0 32px #fff45380,
+    0 0 48px #fff45340;
+  animation: glow 2s ease-in-out infinite;
+}
+
+.empty {
+  opacity: 0.35;
+  border-style: dashed;
+}
+
+/* 日付表示 */
+.dateRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.dateNumber {
+  display: inline-block;
+  font-weight: 700;
+  font-size: clamp(0.7rem, 2vw, 1.2rem);
+  line-height: 1;
+}
+
+.sundayDate {
+  color: #ff8080;
+}
+
+.saturdayDate {
+  color: #7abaff;
+}
+
+.holidayDate {
+  color: #ffb3b3;
+}
+
+/* バッジ表示 */
+.badgeContainer {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.badgeMarker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+.badgeIcon {
+  width: 12px;
+  height: 12px;
+  stroke-width: 2.2;
+}
+
+.badgeLegendIcon {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.2;
+}
+
+.badge-stream-off {
+  color: rgba(255, 110, 110, 0.95);
+}
+
+.badge-work-off {
+  color: rgba(95, 255, 155, 0.95);
+}
+
+.badge-tentative {
+  color: rgba(210, 210, 230, 0.95);
+}
+
+/* モバイル表示用バッジ調整 */
+@media (max-width: 640px) {
+  .badgeContainer {
+    justify-content: flex-end;
+  }
+
+  .badgeMarker {
+    width: 14px;
+    height: 14px;
+  }
+
+  .badgeIcon {
+    width: 10px;
+    height: 10px;
+  }
+
+  .badgeLegendIcon {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+
+/* グロー用アニメーション */
+@keyframes glow {
+  0%, 100% {
+    box-shadow:
+      0 0 24px rgba(255, 200, 100, 0.6),
+      0 0 40px rgba(255, 150, 50, 0.4),
+      0 10px 24px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+  50% {
+    box-shadow:
+      0 0 32px rgba(255, 200, 100, 0.8),
+      0 0 50px rgba(255, 150, 50, 0.5),
+      0 10px 24px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+}
+
+/* ====================================
+   イベント要素
+   ==================================== */
+
+.eventList {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.eventChip {
+  padding: clamp(5px, 0.8vw, 9px) clamp(6px, 1vw, 9px);
+  border-radius: clamp(3px, 0.8vw, 6px);
+  background: linear-gradient(135deg, rgba(142, 200, 255, 0.55), rgba(255, 226, 140, 0.45));
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font-size: clamp(0.7rem, 2vw, 0.85rem);
+  line-height: 1.3;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 0;
+}
+
+.eventChip:hover {
+  transform: scale(1.02);
+}
+
+.eventChip:active {
+  transform: scale(0.98);
+}
+
+.eventText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.eventIconLine {
+  flex: 0 0 auto;
+  display: inline-block;
+  line-height: 1;
+  font-size: 0.95em;
+}
+
+.eventTitleRow {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.eventCategory {
+  display: inline;
+  font-weight: 600;
+}
+
+.eventTitle {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  font-size: clamp(0.65rem, 2vw, 0.75rem);
+}
+
+.eventTime {
+  display: block;
+  font-size: 0.72rem;
+  opacity: 0.9;
+}
+
+/* 時間帯別イベントカラー */
+.event-morning {
+  background: linear-gradient(135deg, rgba(100, 255, 100, 0.3), rgba(100, 255, 100, 0.25));
+  border: 2px solid rgb(100, 255, 100);
+  border-left: 8px solid rgb(100, 255, 100);
+  border-right: 8px solid rgb(100, 255, 100);
+}
+
+.event-afternoon {
+  background: linear-gradient(135deg, rgba(255, 255, 120, 0.3), rgba(255, 255, 120, 0.25));
+  border: 2px solid rgb(255, 255, 120);
+  border-left: 8px solid rgb(255, 255, 120);
+  border-right: 8px solid rgb(255, 255, 120);
+}
+
+.event-evening {
+  background: linear-gradient(135deg, rgba(100, 160, 255, 0.35), rgba(100, 160, 255, 0.25));
+  border: 2px solid rgb(100, 160, 255);
+  border-left: 8px solid rgb(100, 160, 255);
+  border-right: 8px solid rgb(100, 160, 255);
+}
+
+.event-late-night {
+  background: linear-gradient(135deg, rgba(130, 105, 255, 0.3), rgba(130, 105, 255, 0.25));
+  border: 2px solid rgb(130, 105, 255);
+  border-left: 8px solid rgb(130, 105, 255);
+  border-right: 8px solid rgb(130, 105, 255);
+}
+
+.event-undefined {
+  background: linear-gradient(135deg, rgba(200, 200, 200, 0.3), rgba(200, 200, 200, 0.25));
+  border: 2px solid rgb(200, 200, 200);
+  border-left: 8px solid rgb(200, 200, 200);
+  border-right: 8px solid rgb(200, 200, 200);
+}
+
+/* ====================================
+   テーブルセル（リスト表示）
+   ==================================== */
+
+.tableHeaderDate,
+.tableHeaderTime,
+.tableHeaderTitle,
+.tableHeaderCategory {
+  font-size: clamp(0.65rem, 1.5vw, 1.0rem);
+  font-weight: 700;
+  padding: 0 clamp(8px, 2vw, 16px);
+}
+
+.tableCellDate,
+.tableCellTime {
+  font-weight: 500;
+  font-size: clamp(0.55rem, 1.5vw, 1.0rem);
+  color: #fff453;
+  padding: 0 clamp(8px, 2vw, 16px);
+}
+
+.tableCellTitle {
+  font-weight: 600;
+  font-size: clamp(0.75rem, 1.5vw, 1.0rem);
+  color: rgba(255, 255, 255, 0.95);
+  padding: 0 clamp(8px, 2vw, 16px);
+}
+
+.tableCellCategory {
+  font-size: clamp(0.55rem, 1.5vw, 1.0rem);
+  padding: 0 clamp(8px, 2vw, 16px);
+}
+
+/* ====================================
+   レスポンシブデザイン
+   ==================================== */
+
+@media (max-width: 1100px) {
+  .calendarCard {
+    padding: clamp(10px, 2.5vw, 28px);
+  }
+
+  .weekRow {
+    font-size: 0.8rem;
+  }
+
+  .eventChip {
+    font-size: 0.8rem;
+  }
+
+  .eventTime {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .weekRow {
+    font-size: 0.78rem;
+  }
+
+  .eventChip {
+    font-size: 0.72rem;
+    padding: 5px 7px;
+  }
+
+  .eventTitle {
+    font-size: 0.7rem;
+  }
+
+  .eventTime {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .dateNumber {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .eventList {
+    margin-top: 1px !important;
+    margin-bottom: 2px !important;
+  }
+  
+  .page {
+    padding: 0 10px 72px;
+  }
+
+  .hero {
+    padding-top: 100px;
+    padding-bottom: 30px;
+  }
+
+  .calendarCard {
+    padding: clamp(6px, 1.5vw, 20px);
+  }
+
+  .weekRow {
+    font-size: 0.74rem;
+  }
+
+  .eventChip {
+    font-size: 0.65rem;
+    padding: 4px 6px;
+  }
+
+  .eventText {
+    align-items: center;
+    text-align: center;
+  }
+
+  .eventIconLine {
+    width: 100%;
+    text-align: center;
+    font-size: clamp(0.6rem, 1.5vw, 1.25rem);
+    white-space: nowrap;
+  }
+
+  .eventTitleRow {
+    display: none;
+  }
+
+  .eventTime {
+    display: none;
+  }
+
+  /* 時間帯別イベントカラー */
+  .event-morning {
+    background: linear-gradient(135deg, rgba(100, 255, 100, 0.3), rgba(100, 255, 100, 0.25));
+    border: 0.5px solid rgb(100, 255, 100);
+    border-left: 4px solid rgb(100, 255, 100);
+    border-right: 4px solid rgb(100, 255, 100);
+  }
+
+  .event-afternoon {
+    background: linear-gradient(135deg, rgba(255, 255, 120, 0.3), rgba(255, 255, 120, 0.25));
+    border: 0.5px solid rgb(255, 255, 120);
+    border-left: 4px solid rgb(255, 255, 120);
+    border-right: 4px solid rgb(255, 255, 120);
+  }
+
+  .event-evening {
+    background: linear-gradient(135deg, rgba(100, 160, 255, 0.35), rgba(100, 160, 255, 0.25));
+    border: 0.5px solid rgb(100, 160, 255);
+    border-left: 4px solid rgb(100, 160, 255);
+    border-right: 4px solid rgb(100, 160, 255);
+  }
+
+  .event-late-night {
+    background: linear-gradient(135deg, rgba(130, 105, 255, 0.3), rgba(130, 105, 255, 0.25));
+    border: 0.5px solid rgb(130, 105, 255);
+    border-left: 4px solid rgb(130, 105, 255);
+    border-right: 4px solid rgb(130, 105, 255);
+  }
+
+  .event-undefined {
+    background: linear-gradient(135deg, rgba(200, 200, 200, 0.3), rgba(200, 200, 200, 0.25));
+    border: 0.5px solid rgb(200, 200, 200);
+    border-left: 4px solid rgb(200, 200, 200);
+    border-right: 4px solid rgb(200, 200, 200);
+  }
+
+}
+
+@media (max-width: 500px) {
+  .page {
+    padding: 0 8px 60px;
+  }
+
+  .calendarCard {
+    padding: clamp(6px, 1.5vw, 16px);
+  }
+
+  .weekRow {
+    font-size: 0.7rem;
+  }
+
+  .eventList {
+    gap: 4px;
+  }
+}

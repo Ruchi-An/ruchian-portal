@@ -1,0 +1,36 @@
+.footer {
+  text-align: center;
+  padding: clamp(28px, 4vw, 44px) 20px;
+  margin: 60px auto 0;
+  width: min(1200px, 96%);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.content {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 18px;
+}
+
+@media (max-width: 640px) {
+  .footer {
+    padding: 28px 16px;
+    margin-top: 48px;
+  }
+
+  .content {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 500px) {
+  .footer {
+    padding: 24px 14px;
+    margin-top: 40px;
+  }
+
+  .content {
+    font-size: 15px;
+  }
+}

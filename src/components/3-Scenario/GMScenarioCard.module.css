@@ -1,0 +1,327 @@
+/* GM可能シナリオカード */
+.card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-medium2);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.25),
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 60px rgba(255, 255, 255, 0.05);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 16px 50px rgba(0, 0, 0, 0.3),
+    0 6px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 60px rgba(255, 255, 255, 0.06);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(150, 200, 255, 0.2);
+  background: rgba(10, 30, 80, 0.5);
+  order: 0;
+  width: 100%;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1rem, 2.2vw, 1.3rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.98);
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.category {
+  font-size: clamp(0.65rem, 1.5vw, 0.75rem);
+  font-weight: 600;
+  color: rgba(220, 235, 255, 0.95);
+  background: rgba(100, 150, 255, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.03em;
+}
+
+/* カード画像 */
+.cardImage {
+  order: 2;
+  width: 35%;
+  min-width: 160px;
+  max-width: 320px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.cardImage img {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .cardImage img {
+  transform: scale(1.05);
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(100, 150, 255, 0.1);
+  color: rgba(150, 200, 255, 0.5);
+  font-size: clamp(0.75rem, 1.6vw, 0.85rem);
+}
+
+.cardContent {
+  order: 1;
+  padding: 16px;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contentColumns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 600px) {
+  .contentColumns {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.leftColumn,
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.infoItem {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.label {
+  color: rgba(150, 200, 255, 0.7);
+  font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.value {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+  flex: 1;
+}
+
+.link {
+  color: rgba(150, 200, 255, 0.95);
+  text-decoration: none;
+  font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+  transition: color 0.2s ease;
+  padding: 2px 8px;
+  background: rgba(100, 150, 255, 0.2);
+  border-radius: 4px;
+  border: 1px solid rgba(150, 200, 255, 0.3);
+  display: inline-block;
+}
+
+.link:hover {
+  color: rgba(255, 211, 77, 0.95);
+  background: rgba(100, 150, 255, 0.35);
+  border-color: rgba(150, 200, 255, 0.5);
+}
+
+.badgeIcon {
+  color: currentColor;
+}
+
+.badgeLabel {
+  color: currentColor;
+}
+
+.notesSection {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(150, 200, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.notes {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+/* 画像モーダル */
+.imageModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.imageModalContent {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .card {
+    border-radius: 10px;
+  }
+
+  .cardHeader {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+
+  .headerLeft {
+    gap: 8px;
+    flex: 1;
+  }
+
+  .category {
+    padding: 3px 6px;
+  }
+
+  .cardImage {
+    order: 2;
+    width: 100px;
+    min-width: 80px;
+    max-width: 120px;
+    min-height: 100px;
+    flex-shrink: 0;
+  }
+
+  .cardContent {
+    order: 1;
+    flex: 1;
+    min-width: 0;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .contentColumns {
+    gap: 10px;
+  }
+
+  .leftColumn,
+  .rightColumn {
+    gap: 8px;
+  }
+
+  .title {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .infoItem {
+    min-width: 0;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    border-radius: 8px;
+  }
+
+  .cardHeader {
+    padding: 8px 12px;
+  }
+
+  .title {
+    line-height: 1.3;
+  }
+
+  .category {
+    padding: 2px 5px;
+  }
+
+  .cardImage {
+    width: 80px;
+    min-width: 70px;
+    max-width: 90px;
+    min-height: 80px;
+  }
+
+  .cardContent {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .contentColumns {
+    gap: 8px;
+  }
+
+  .leftColumn,
+  .rightColumn {
+    gap: 6px;
+  }
+
+  .infoItem {
+    gap: 4px;
+  }
+}
