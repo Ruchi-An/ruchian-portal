@@ -25,8 +25,31 @@ export function GMScenarioCard({ card }: GMScenarioCardProps) {
 
   return (
     <div className={styles.card} onClick={handleClick}>
-      <div className={styles.row}>
-        <div className={styles.badgeCol}>
+      <div className={styles.cardImage}>
+        {firstImage ? (
+          <img src={firstImage} alt={card.title} />
+        ) : (
+          <div className={styles.imagePlaceholder}>No Image</div>
+        )}
+      </div>
+
+      <div className={styles.cardContent}>
+        <div className={styles.titleSection}>
+          <h3 className={styles.title}>{card.title}</h3>
+          {card.scenarioUrl && (
+            <a
+              href={card.scenarioUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.linkButton}
+              onClick={(e) => e.stopPropagation()}
+            >
+              →
+            </a>
+          )}
+        </div>
+
+        <div className={styles.badgesContainer}>
           {card.category && (
             <ScenarioCategoryBadge
               category={card.category}
@@ -39,19 +62,8 @@ export function GMScenarioCard({ card }: GMScenarioCardProps) {
           {streamBadgeText && <span className={styles.badge}>{streamBadgeText}</span>}
         </div>
 
-        <div className={styles.titleCol}>
-          <h3 className={styles.title}>{card.title}</h3>
-          <span className={styles.gmCount}>GM/ST回数: {card.gmPlayCount ?? '-'}</span>
-        </div>
-
-        <div className={styles.thumb}>
-          <div className={styles.cardImage}>
-            {firstImage ? (
-              <img src={firstImage} alt={card.title} />
-            ) : (
-              <div className={styles.imagePlaceholder}>No Image</div>
-            )}
-          </div>
+        <div className={styles.gmCountContainer}>
+          <span className={styles.gmCount}>GM回数: {card.gmPlayCount ?? '-'}</span>
         </div>
       </div>
     </div>

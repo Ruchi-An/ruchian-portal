@@ -18,8 +18,9 @@ supabase db push
 - `.env.local` の `SUPABASE_SERVICE_ROLE_KEY` は **service_role** のキーを設定してください。
 - `anon` キーを `SUPABASE_SERVICE_ROLE_KEY` に設定すると、スキーマ作成や同期書き込みが失敗します。
 
-## endcard画像（Obsidian → Supabase Storage）
-- `scripts/sync.ts` は `endcard` が `![[image.png]]` / `[[image.png]]` / `image.png` の場合、ローカル画像を Supabase Storage にアップロードして公開URLを `schedules.endcard` に保存します。
+## 画像フィールド（Obsidian → Supabase Storage）
+- `scripts/sync.ts` は `endcard_image` / `trailer_image` が `![[image.png]]` / `[[image.png]]` / `image.png` の場合、ローカル画像を Supabase Storage にアップロードして公開URLを保存します。
+- `endcard_image` は `schedules.endcard_image` に、`trailer_image` は `scenario_info.trailer_image` に保存されます。
 - 既に `https://` から始まるURLが入っている場合はそのまま保存します。
 
 ### 必須/推奨設定

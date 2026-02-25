@@ -2,15 +2,17 @@
 // ==================== スケジュールグループ化フック ====================
 
 import type { Event } from "../ScheduleCalendar";
+import { formatDateKey } from "./dateUtils";
 
 export function useScheduleGroups(schedules: Event[]) {
+  const todayKey = formatDateKey(new Date());
   const eventsByDate: Record<string, Event[]> = {};
   const futureSchedules: Event[] = [];
   const pastSchedules: Event[] = [];
   const pendingSchedules: Event[] = [];
 
   schedules.forEach((schedule) => {
-    if (schedule.status === 'pending') {
+    if (!schedule.date || schedule.status === 'pending') {
       pendingSchedules.push(schedule);
       return;
     }
@@ -23,12 +25,10 @@ export function useScheduleGroups(schedules: Event[]) {
         eventsByDate[schedule.date].push(schedule);
       }
 
-      if (schedule.status === 'planned') {
-        futureSchedules.push(schedule);
-      }
-
-      if (schedule.status === 'done') {
+      if (schedule.date < todayKey) {
         pastSchedules.push(schedule);
+      } else {
+        futureSchedules.push(schedule);
       }
 
       return;

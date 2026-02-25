@@ -17,9 +17,7 @@ import { EventDetailModal } from "./EventDetailModal"; // イベント詳細モ�
 import { CalendarNavigation } from "./CalendarNavigation";
 import { ScheduleCalendar, type Event } from "./ScheduleCalendar";
 import { ScheduleList } from "./ScheduleList";
-import { ScheduleSidePanel } from "./ScheduleSidePanel";
 import { ScheduleCommonHeader } from "./ScheduleCommonHeader";
-import { ListDown } from "./ListDown";
 // CSSモジュール
 import calendarStyles from "./css/ScheduleCalendar.module.css";
 // カスタムフック・ユーティリティ
@@ -50,10 +48,9 @@ export function SchedulePage() {
   // 表示モード（カレンダー/未来リスト/過去リスト）
   const [viewMode, setViewMode] = useState<"calendar" | "future" | "past">("calendar");
   // カテゴリフィルター（リスト表示時のみ使用）
-  const [categoryFilter, setCategoryFilter] = useState<"all" | "🎮" | "📚" | "🌏">("all");
+  const [categoryFilter, setCategoryFilter] = useState<"all" | "🎮" | "📚">("all");
   // 画面幅判定
   const isNarrowScreen = useIsNarrowScreen();
-  const isWide = window.innerWidth > 1200;
 
   // バッジデータの整理
   const { streamOffDays, workOffDays, tentativeDays } = useBadgeSets(badges);
@@ -71,6 +68,9 @@ export function SchedulePage() {
     setDisplayDate(prev => changeYear(prev, parseInt(e.target.value, 10)));
   const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setDisplayDate(prev => changeMonth(prev, parseInt(e.target.value, 10)));
+  const handleToday = () => {
+    setDisplayDate({ year: currentYear, month: now.getMonth() });
+  };
 
   // イベントクリック時のモーダル表示処理
   const handleEventClick = (event: Event) => {
@@ -86,9 +86,6 @@ export function SchedulePage() {
 
   // データ読み込み中フラグ
   const isLoading = loading.schedules;
-
-  // サイドパネル開閉状態を親で管理
-  const [sidePanelOpen, setSidePanelOpen] = useState(true);
 
   // 画面描画
   return (
@@ -122,7 +119,7 @@ export function SchedulePage() {
               spacing="compact"
               tabs={CATEGORY_TABS}
               activeTab={categoryFilter}
-              onTabChange={tabKey => setCategoryFilter(tabKey as "all" | "🎮" | "📚" | "🌏")}
+              onTabChange={tabKey => setCategoryFilter(tabKey as "all" | "🎮" | "📚")}
               isNarrowScreen={isNarrowScreen}
             />
           )}
@@ -131,60 +128,36 @@ export function SchedulePage() {
             {/* カレンダー表示 */}
             {viewMode === "calendar" && (
               <div
-                className="calendarWithPanel"
                 style={{
                   display: 'flex',
-                  flexDirection: isNarrowScreen ? 'column' : 'row',
-                  alignItems: 'flex-start',
-                  gap: isNarrowScreen ? 0 : 24,
+                  flexDirection: 'column',
                   width: '100%',
                   position: 'relative',
                 }}
               >
-                <div style={{ flex: 1, minWidth: 0, position: 'relative', width: '100%' }}>
-                  <header className={calendarStyles.calendarHeader}>
-                    <CalendarNavigation
-                      year={year}
-                      monthIndex={monthIndex}
-                      yearOptions={yearOptions}
-                      onPrevMonth={handlePrevMonth}
-                      onNextMonth={handleNextMonth}
-                      onYearChange={handleYearChange}
-                      onMonthChange={handleMonthChange}
-                    />
-                  </header>
-                  {/* カレンダー本体 */}
-                  <ScheduleCalendar
+                <header className={calendarStyles.calendarHeader}>
+                  <CalendarNavigation
                     year={year}
                     monthIndex={monthIndex}
-                    todayKey={todayKey}
-                    eventsByDate={eventsByDate}
-                    onEventClick={handleEventClick}
-                    streamOffDays={streamOffDays}
-                    workOffDays={workOffDays}
-                    tentativeDays={tentativeDays}
+                    yearOptions={yearOptions}
+                    onPrevMonth={handlePrevMonth}
+                    onNextMonth={handleNextMonth}
+                    onYearChange={handleYearChange}
+                    onMonthChange={handleMonthChange}
+                    onToday={handleToday}
                   />
-                  {/* サイドパネル開くボタンをカレンダーの右上に絶対配置 */}
-                  <ScheduleSidePanel
-                    schedules={schedules}
-                    onEventClick={handleEventClick}
-                    panelMode="buttonOnly"
-                    open={sidePanelOpen}
-                    setOpen={setSidePanelOpen}
-                  />
-                </div>
-                {/* サイドパネル本体（開いているときのみ横に表示） */}
-                {sidePanelOpen && (
-                  <div style={{ width: isNarrowScreen ? '100%' : undefined }}>
-                    <ScheduleSidePanel
-                      schedules={schedules}
-                      onEventClick={handleEventClick}
-                      panelMode="panelOnly"
-                      open={sidePanelOpen}
-                      setOpen={setSidePanelOpen}
-                    />
-                  </div>
-                )}
+                </header>
+                {/* カレンダー本体 */}
+                <ScheduleCalendar
+                  year={year}
+                  monthIndex={monthIndex}
+                  todayKey={todayKey}
+                  eventsByDate={eventsByDate}
+                  onEventClick={handleEventClick}
+                  streamOffDays={streamOffDays}
+                  workOffDays={workOffDays}
+                  tentativeDays={tentativeDays}
+                />
               </div>
             )}
 
@@ -207,15 +180,7 @@ export function SchedulePage() {
             )}
           </div>
 
-          {/* 1200px以下で日程未定リストダウンをカレンダー下に表示 */}
-          {!isWide && (
-            <div style={{ width: '100%', margin: '32px 0 0 0' }}>
-              <ListDown
-                schedules={schedules}
-                onEventClick={handleEventClick}
-              />
-            </div>
-          )}
+
         </div>
       )}
 

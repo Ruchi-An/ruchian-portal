@@ -102,7 +102,7 @@
   border: 1px solid rgb(255, 255, 255);
   background: rgba(175, 225, 255, 0.3);
   color: #ffffff;
-  font-size: clamp(0.5rem, 1.5vw, 0.9rem);
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -132,7 +132,7 @@
   border: 1px solid rgb(255, 255, 255);
   background: rgba(175, 225, 255, 0.3);
   color: #ffffff;
-  font-size: clamp(0.5rem, 1.5vw, 0.9rem);
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -145,6 +145,30 @@
 }
 
 .navButton:active {
+  transform: translateY(0);
+}
+
+.todayButton {
+  padding: 8px 16px;
+  border-radius: var(--radius-small2);
+  border: 1px solid rgb(245, 255, 100);
+  background: rgba(245, 255, 100, 0.15);
+  color: rgb(255, 255, 255);
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+}
+
+.todayButton:hover {
+  background: rgba(245, 255, 100, 0.25);
+  border-color: rgba(245, 255, 100, 0.8);
+  transform: translateY(-2px);
+  text-shadow: 0 0 8px rgba(255, 255, 190, 0.5);
+}
+
+.todayButton:active {
   transform: translateY(0);
 }
 
@@ -440,6 +464,30 @@
   font-size: 0.95em;
 }
 
+.eventCategoryIcon {
+  width: 1.24em;
+  height: 1.24em;
+  stroke-width: 2.15;
+  vertical-align: middle;
+}
+
+.eventCompactRow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1;
+}
+
+.eventCompactTime {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+  opacity: 0.95;
+}
+
 .eventTitleRow {
   display: block;
   white-space: nowrap;
@@ -523,6 +571,8 @@
   font-size: clamp(0.55rem, 1.5vw, 1.0rem);
   color: #fff453;
   padding: 0 clamp(8px, 2vw, 16px);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
 
 .tableCellTitle {
@@ -625,12 +675,28 @@
     white-space: nowrap;
   }
 
+  .eventCategoryIcon {
+    width: 1.34em;
+    height: 1.34em;
+    stroke-width: 2.25;
+  }
+
   .eventTitleRow {
     display: none;
   }
 
   .eventTime {
     display: none;
+  }
+
+  .eventCompactTime {
+    display: none;
+  }
+
+  .eventCompactRow {
+    width: 100%;
+    gap: 0;
+    justify-content: center;
   }
 
   /* 時間帯別イベントカラー */

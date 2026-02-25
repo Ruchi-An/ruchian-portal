@@ -7,7 +7,7 @@ import React from "react";
 import styles from "../2-Schedule/css/ScheduleCalendar.module.css";
 
 // ==================== Props型定義 ====================
-export interface CalendarNavigationProps {
+interface CalendarNavigationProps {
   year: number;
   monthIndex: number; // 0-11
   yearOptions: number[];
@@ -15,6 +15,7 @@ export interface CalendarNavigationProps {
   onNextMonth: () => void;
   onYearChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onMonthChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onToday: () => void;
 }
 
 // ==================== コンポーネント本体 ====================
@@ -26,6 +27,7 @@ export const CalendarNavigation: React.FC<CalendarNavigationProps> = ({
   onNextMonth,
   onYearChange,
   onMonthChange,
+  onToday,
 }) => {
   return (
     <div className={styles.dateNavigationContainer}>
@@ -66,6 +68,13 @@ export const CalendarNavigation: React.FC<CalendarNavigationProps> = ({
         aria-label="次月"
       >
         →
+      </button>
+      <button
+        className={styles.todayButton}
+        onClick={onToday}
+        aria-label="今日に戻る"
+      >
+        今日
       </button>
     </div>
   );

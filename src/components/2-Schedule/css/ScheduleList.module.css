@@ -140,6 +140,35 @@
   color: #b6e0ff;
 }
 
+.titleWithIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.titleWithIconGame {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 0;
+}
+
+.titleIcon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.1;
+  color: #eaf6ff;
+  flex: 0 0 auto;
+}
+
+.titleText {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ====================================
    配置クラス：セルの水平配置
    
@@ -175,127 +204,62 @@
   background: linear-gradient(135deg, rgba(30,40,80,0.85), rgba(80,120,180,0.7));
   border-left: 2px solid rgba(150,200,255,0.25);
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  padding: 16px 12px 16px 12px;
-  min-width: 220px;
-  max-width: 320px;
+  padding: 20px 14px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   z-index: 2;
   position: relative;
   transition: width 0.2s, opacity 0.2s;
-}
-
-/* サイドパネル非表示 */
-.sidePanelClosed {
-  display: none !important;
-}
-
-/* サイドパネル開くボタン（絶対配置） */
-.sidePanelOpenButton {
-  position: absolute;
-  top: 30px;
-  right: 55px;
-  transform: translate(50%,-60%);
-  z-index: 10;
-  background: rgba(215, 235, 255, 0.425);
-  color: #ffffff;
-  font-size: clamp(0.5rem, 1.5vw, 1.0rem);
-  font-weight: 500;
-  border: none;
-  border-radius: 10px;
-  width: clamp(70px, 7vw, 100px);
-  height: clamp(10px, 5vw, 40px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.13);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: background 0.2s;
-}
-.sidePanelOpenButton:hover {
-  background: #fff;
-  color: #1a2340;
-}
-
-.sidePanelToggle {
-  background: rgba(255,255,255,0.12);
-  border: none;
-  color: #fff;
-  font-size: 0.95rem;
-  padding: 4px 10px;
   border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 8px;
-  align-self: flex-end;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: background 0.2s;
+  height: 100%;
+  overflow-y: auto;
+  width: 100%;
 }
-.sidePanelToggle:hover {
-  background: rgba(150,200,255,0.18);
-}
+
 .sidePanelContent {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
 }
+
 .sidePanelTitle {
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2vw, 1.5rem);
   font-weight: 700;
-  margin: 0 0 8px 0;
+  margin: 0;
   color: #fff;
   letter-spacing: 0.04em;
+  flex-shrink: 0;
 }
+
 .undatedList {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
+
 .undatedItem {
   background: rgba(255,255,255,0.08);
   border-radius: 6px;
-  padding: 7px 10px;
+  padding: 9px 12px;
   color: #eaf6ff;
   font-size: 0.98rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: flex-start;
   cursor: pointer;
-  transition: background 0.18s;
+  transition: background 0.18s, transform 0.15s;
 }
+
 .undatedItem:hover {
-  background: rgba(150,200,255,0.18);
-}
-.undatedTitle {
-  font-weight: 600;
-  font-size: 1.01em;
-}
-.undatedCategory {
-  font-size: 0.92em;
-  color: #b6e0ff;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.undatedCategoryIcon {
-  color: #b6e0ff;
-}
-
-.undatedCategoryLabel {
-  color: #b6e0ff;
-}
-
-@media (max-width: 1200px) {
-  .sidePanel,
-  .sidePanelOpenButton {
-    display: none !important;
-  }
+  background: rgba(150,200,255,0.22);
+  transform: translateX(2px);
 }

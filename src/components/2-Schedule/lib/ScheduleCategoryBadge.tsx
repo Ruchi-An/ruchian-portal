@@ -5,7 +5,7 @@ type CategoryMeta = {
   Icon: LucideIcon;
 };
 
-export function getScheduleCategoryMeta(category?: string | null): CategoryMeta {
+function getScheduleCategoryMeta(category?: string | null): CategoryMeta {
   if (category === '🎮') return { label: 'ゲーム', Icon: Gamepad2 };
   if (category === '📚') return { label: 'シナリオ', Icon: BookOpenText };
   if (category === '🌏') return { label: 'リアル', Icon: Globe };

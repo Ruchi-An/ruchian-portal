@@ -6,7 +6,6 @@ import Footer from './components/0-Footer/Footer.tsx';
 import HeroSection from './components/1-Top/HeroSection.tsx';
 import { ScheduleSection } from './components/1-Top/ScheduleSection.tsx';
 import { ScenarioSection } from './components/1-Top/ScenarioSection.tsx';
-import './styles/sections.css';
 
 const SchedulePage = lazy(() =>
   import('./components/2-Schedule/Schedule.tsx').then((module) => ({ default: module.SchedulePage })),

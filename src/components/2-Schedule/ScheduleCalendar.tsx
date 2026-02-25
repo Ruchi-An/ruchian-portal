@@ -10,7 +10,7 @@
 
 import type { ScheduleData } from "types/database";
 import Holidays from "date-holidays";
-import { BedSingle, MonitorOff, Pin, type LucideIcon } from "lucide-react";
+import { BedSingle, MonitorOff, Pin, Gamepad2, BookOpenText, Globe, type LucideIcon } from "lucide-react";
 import sharedStyles from "./css/ScheduleCalendar.module.css";
 
 // ==================== 型定義 ====================
@@ -19,7 +19,7 @@ import sharedStyles from "./css/ScheduleCalendar.module.css";
 export type Event = Partial<ScheduleData> & { title?: string };
 
 /** カレンダーの1日分のセル情報 */
-export type CalendarCell = {
+type CalendarCell = {
   label: string; // 日付表示（例: "1", "2", ...）
   key: string; // 一意なkey（日付キーまたは"empty-N"）
   isToday: boolean; // 今日かどうか
@@ -82,6 +82,13 @@ function extractGenreEmoji(genre: string | null | undefined): string {
 function getEventIcon(event: Event): string {
   if (event.contentType === "real" || event.category === "🌏") return REAL_ICON;
   return extractGenreEmoji(event.genre);
+}
+
+function getCategoryIcon(event: Event): LucideIcon | null {
+  if (event.contentType === "real" || event.category === "🌏") return Globe;
+  if (event.category === "🎮") return Gamepad2;
+  if (event.category === "📚") return BookOpenText;
+  return null;
 }
 
 // ==================== Props定義 ====================
@@ -281,6 +288,8 @@ export function ScheduleCalendar({
                     const startLabel = event.startTime || "未定";
                     const eventIcon = getEventIcon(event);
                     const shortTitle = event.label?.trim() || event.title || "-";
+                    const CategoryIcon = getCategoryIcon(event);
+                    const isIconTimeOnly = Boolean(CategoryIcon);
 
                     return (
                       <li
@@ -299,9 +308,20 @@ export function ScheduleCalendar({
                         }}
                       >
                         <div className={sharedStyles.eventText}>
-                          <span className={sharedStyles.eventIconLine} aria-hidden="true">{eventIcon}</span>
-                          <span className={sharedStyles.eventTitleRow} title={shortTitle}>{shortTitle}</span>
-                          <span className={sharedStyles.eventTime}>（{startLabel}）</span>
+                          {isIconTimeOnly ? (
+                            <span className={sharedStyles.eventCompactRow}>
+                              <span className={sharedStyles.eventIconLine} aria-hidden="true">
+                                {CategoryIcon && <CategoryIcon className={sharedStyles.eventCategoryIcon} />}
+                              </span>
+                              <span className={sharedStyles.eventCompactTime}>{startLabel}</span>
+                            </span>
+                          ) : (
+                            <>
+                              <span className={sharedStyles.eventIconLine} aria-hidden="true">{eventIcon}</span>
+                              <span className={sharedStyles.eventTitleRow} title={shortTitle}>{shortTitle}</span>
+                              <span className={sharedStyles.eventTime}>（{startLabel}）</span>
+                            </>
+                          )}
                         </div>
                       </li>
                     );

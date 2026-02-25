@@ -60,6 +60,7 @@ type EventFrontmatter = {
   server?: string;
   is_stream?: boolean;
   stream_url?: string;
+  endcard_image?: string;
   endcard?: string;
   memo?: string;
 };
@@ -72,12 +73,14 @@ type ContentFrontmatter = {
   official_url?: string;
   genre?: string;
   memo?: string;
+  players?: string;
   game_system?: string;
   production?: string;
   creator?: string;
   duration?: string;
   possible_GM?: boolean;
   possible_stream?: boolean;
+  trailer_image?: string;
 };
 
 type DayFrontmatter = {
@@ -206,10 +209,15 @@ function resolveLocalAssetPath(assetRef: string, noteFilePath: string): string |
   return null;
 }
 
-async function resolveEndcardValue(endcardRaw: string | undefined, eventId: string, noteFilePath: string): Promise<string | null> {
-  if (!endcardRaw) return null;
+async function resolveImageValue(
+  imageRaw: string | undefined,
+  noteFilePath: string,
+  storagePathPrefix: string,
+  fieldName: 'endcard_image' | 'trailer_image',
+): Promise<string | null> {
+  if (!imageRaw) return null;
 
-  const trimmed = endcardRaw.trim();
+  const trimmed = imageRaw.trim();
   if (!trimmed) return null;
 
   if (/^https?:\/\//i.test(trimmed)) {
@@ -225,19 +233,19 @@ async function resolveEndcardValue(endcardRaw: string | undefined, eventId: stri
 
   const localPath = resolveLocalAssetPath(candidate, noteFilePath);
   if (!localPath) {
-    console.warn(`⚠️  endcard file not found: ${candidate} (${noteFilePath})`);
+    console.warn(`⚠️  ${fieldName} file not found: ${candidate} (${noteFilePath})`);
     return trimmed;
   }
 
   const fileBuffer = fs.readFileSync(localPath);
   const fileName = path.basename(localPath);
   const safeStorageFileName = makeSafeStorageFileName(fileName);
-  const storagePath = `${eventId}/${safeStorageFileName}`;
+  const storagePath = `${storagePathPrefix}/${safeStorageFileName}`;
   const contentType = detectContentType(localPath);
 
   const bucketReady = await ensureEndcardBucket();
   if (!bucketReady) {
-    console.error(`❌ endcard upload skipped: bucket '${ENDCARD_BUCKET}' is unavailable`);
+    console.error(`❌ ${fieldName} upload skipped: bucket '${ENDCARD_BUCKET}' is unavailable`);
     return trimmed;
   }
 
@@ -246,7 +254,7 @@ async function resolveEndcardValue(endcardRaw: string | undefined, eventId: stri
     .upload(storagePath, fileBuffer, { upsert: true, contentType });
 
   if (uploadError) {
-    console.error(`❌ endcard upload failed: ${storagePath}`, uploadError.message);
+    console.error(`❌ ${fieldName} upload failed: ${storagePath}`, uploadError.message);
     return trimmed;
   }
 
@@ -254,12 +262,20 @@ async function resolveEndcardValue(endcardRaw: string | undefined, eventId: stri
   const publicUrl = data.publicUrl;
 
   if (!publicUrl) {
-    console.warn(`⚠️  endcard public URL not generated: ${storagePath}`);
+    console.warn(`⚠️  ${fieldName} public URL not generated: ${storagePath}`);
     return trimmed;
   }
 
-  console.log(`🖼️  endcard uploaded: ${fileName} -> ${storagePath}`);
+  console.log(`🖼️  ${fieldName} uploaded: ${fileName} -> ${storagePath}`);
   return publicUrl;
+}
+
+async function resolveEndcardImageValue(endcardImageRaw: string | undefined, eventId: string, noteFilePath: string): Promise<string | null> {
+  return resolveImageValue(endcardImageRaw, noteFilePath, `events/${eventId}`, 'endcard_image');
+}
+
+async function resolveTrailerImageValue(trailerImageRaw: string | undefined, scenarioId: string, noteFilePath: string): Promise<string | null> {
+  return resolveImageValue(trailerImageRaw, noteFilePath, `scenarios/${scenarioId}`, 'trailer_image');
 }
 
 async function ensureEndcardBucket(): Promise<boolean> {
@@ -384,6 +400,8 @@ async function syncContents(): Promise<ContentCache> {
         continue;
       }
 
+      const resolvedTrailerImage = await resolveTrailerImageValue(content.trailer_image, id, filePath);
+
       const { error } = await supabase.from('scenario_info').upsert(
         {
           id,
@@ -391,12 +409,14 @@ async function syncContents(): Promise<ContentCache> {
           official_url: content.official_url ?? null,
           genre: content.genre ?? null,
           memo: content.memo ?? null,
+          players: content.players ?? null,
           game_system: content.game_system ?? null,
           production: content.production ?? null,
           creator: content.creator ?? null,
           duration: content.duration ?? null,
           possible_gm: content.possible_GM ?? false,
           possible_stream: content.possible_stream ?? false,
+          trailer_image: resolvedTrailerImage,
         },
         { onConflict: 'id' },
       );
@@ -452,7 +472,7 @@ async function syncEvents(contentCache: ContentCache) {
       }
 
       const formattedStartTime = formatStartTime(event.start_time);
-      const resolvedEndcard = await resolveEndcardValue(event.endcard, id, filePath);
+      const resolvedEndcardImage = await resolveEndcardImageValue(event.endcard_image ?? event.endcard, id, filePath);
       console.log(`📝 [${fileName}] start_time: ${JSON.stringify(event.start_time)} -> ${JSON.stringify(formattedStartTime)}`);
 
       const { error } = await supabase.from('schedules').upsert(
@@ -472,7 +492,7 @@ async function syncEvents(contentCache: ContentCache) {
           server: event.server ?? null,
           is_stream: event.is_stream ?? false,
           stream_url: event.stream_url ?? null,
-          endcard: resolvedEndcard,
+          endcard_image: resolvedEndcardImage,
           memo: event.memo ?? null,
         },
         { onConflict: 'id' },

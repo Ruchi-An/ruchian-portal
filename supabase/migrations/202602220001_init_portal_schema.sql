@@ -52,12 +52,14 @@ create table if not exists public.scenario_info (
   official_url text,
   genre text,
   memo text,
+  players text,
   game_system text,
   production text,
   creator text,
   duration text,
   possible_gm boolean not null default false,
   possible_stream boolean not null default false,
+  trailer_image text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -76,7 +78,7 @@ create table if not exists public.schedules (
   gmst_name text,
   server text,
   stream_url text,
-  endcard text,
+  endcard_image text,
   memo text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),

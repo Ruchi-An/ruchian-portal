@@ -18,7 +18,7 @@ interface ScenarioCardListProps {
 }
 
 // シナリオカードリストコンポーネント
-export function ScenarioCardList({ 
+function ScenarioCardList({ 
   cards, 
   showHeader = false, 
   onSortChange, 
@@ -169,9 +169,9 @@ export function ScenarioCardList({
                   </div>
 
                   {/* 画像（右側） */}
-                  <div className={styles.detailsImage} onClick={() => card.endcardUrl && setModalCard(card)}>
-                    {card.endcardUrl ? (
-                      <img src={card.endcardUrl} alt={card.title} />
+                  <div className={styles.detailsImage} onClick={() => card.endcardImageUrl && setModalCard(card)}>
+                    {card.endcardImageUrl ? (
+                      <img src={card.endcardImageUrl} alt={card.title} />
                     ) : (
                       <div className={styles.imagePlaceholder}>No Image</div>
                     )}
@@ -184,10 +184,10 @@ export function ScenarioCardList({
       })}
 
       {/* 画像モーダル */}
-      {modalCard && modalCard.endcardUrl && (
+      {modalCard && modalCard.endcardImageUrl && (
         <div className={styles.imageModal} onClick={() => setModalCard(null)}>
           <img 
-            src={modalCard.endcardUrl} 
+            src={modalCard.endcardImageUrl} 
             alt={modalCard.title} 
             className={styles.imageModalContent}
             onClick={(e) => e.stopPropagation()}

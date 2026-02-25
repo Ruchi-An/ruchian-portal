@@ -8,7 +8,7 @@ type CategoryMeta = {
   color: string;
 };
 
-export function getScenarioCategoryMeta(category: ScenarioCategory): CategoryMeta {
+function getScenarioCategoryMeta(category: ScenarioCategory): CategoryMeta {
   if (category === '📕') return { label: 'マダミス', Icon: Book, color: '#ff6b6b' };
   if (category === '📗') return { label: 'ストプレ', Icon: Book, color: '#7abaff' };
   if (category === '📙') return { label: 'その他', Icon: Book, color: '#6ee7a8' };

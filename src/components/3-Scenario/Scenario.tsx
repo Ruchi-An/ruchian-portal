@@ -25,6 +25,25 @@ const CATEGORY_TABS: Array<{ key: CategoryType; label: string }> = [
   { key: '📙', label: 'その他' },
 ];
 
+function parseDateKey(date: string): Date | null {
+  const match = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  return new Date(year, month - 1, day);
+}
+
+function isPastDateExcludingToday(date?: string | null): boolean {
+  if (!date) return false;
+  const parsed = parseDateKey(date);
+  if (!parsed) return false;
+
+  const today = new Date();
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  return parsed.getTime() < todayStart.getTime();
+}
+
 export function ScenarioPage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -79,11 +98,13 @@ export function ScenarioPage() {
   };
 
   const plannedCards: ScenarioCardType[] = filterScenarioCardsByCategory(passedScenarios)
-    .filter((item) => item.status === 'planned')
+    .filter((item) => item.role === 'PL')
+    .filter((item) => !isPastDateExcludingToday(item.date))
     .sort((a, b) => (a.date ?? '9999-99-99').localeCompare(b.date ?? '9999-99-99'));
 
   const passedCards: ScenarioCardType[] = filterScenarioCardsByCategory(passedScenarios)
-    .filter((item) => item.status === 'done')
+    .filter((item) => item.role === 'PL')
+    .filter((item) => isPastDateExcludingToday(item.date))
     .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
 
   const gmCards: GMScenarioCardType[] = filterGmCardsByCategory(gmScenarios)

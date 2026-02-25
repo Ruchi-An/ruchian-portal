@@ -18,7 +18,7 @@ export type ScheduleDataRow = {
   server?: string | null;
   is_stream?: boolean | null;
   stream_url?: string | null;
-  endcard?: string | null;
+  endcard_image?: string | null;
   memo?: string | null;
 };
 
@@ -38,7 +38,7 @@ export type ScheduleData = {
   server?: string | null;
   isStream?: boolean | null;
   streamUrl?: string | null;
-  endcard?: string | null;
+  endcardImage?: string | null;
   memo?: string | null;
   title: string;
   gameTitle?: string | null;
@@ -77,12 +77,14 @@ export type ScenarioInfoRow = {
   official_url?: string | null;
   genre?: string | null;
   memo?: string | null;
+  players?: string | null;
   game_system?: string | null;
   production?: string | null;
   creator?: string | null;
   duration?: string | null;
   possible_gm?: boolean | null;
   possible_stream?: boolean | null;
+  trailer_image?: string | null;
 };
 
 export type ScenarioInfo = {
@@ -91,12 +93,14 @@ export type ScenarioInfo = {
   officialUrl?: string | null;
   genre?: string | null;
   memo?: string | null;
+  players?: string | null;
   gameSystem?: string | null;
   production?: string | null;
   creator?: string | null;
   duration?: string | null;
   possibleGm?: boolean;
   possibleStream?: boolean;
+  trailerImage?: string | null;
 };
 
 export type PassedScenario = {
@@ -106,6 +110,7 @@ export type PassedScenario = {
   titleYomi?: string;
   date?: string | null;
   status: ScheduleStatus;
+  role?: 'GM' | 'ST' | 'PL' | null;
   type?: string;
   genre?: string;
   gameSystem?: string;
@@ -116,7 +121,7 @@ export type PassedScenario = {
   pl?: string[];
   scenarioUrl?: string;
   streamUrl?: string;
-  endcardUrl?: string;
+  endcardImageUrl?: string;
   displayPassNumber?: number;
 };
 
@@ -143,7 +148,6 @@ export type GMScenario = {
   notes?: string;
 };
 
-export type ScenarioCard = PassedScenario;
 export type GMScenarioCard = GMScenario;
 
 function getScenarioCategory(genre?: string | null, gameSystem?: string | null): string {
@@ -171,7 +175,7 @@ export function transformScheduleDataRow(row: ScheduleDataRow): ScheduleData {
     server: row.server,
     isStream: row.is_stream ?? false,
     streamUrl: row.stream_url,
-    endcard: row.endcard,
+    endcardImage: row.endcard_image,
     memo: row.memo,
     title,
     category: row.content_type === 'scenario' ? '📚' : '🎮',
@@ -201,63 +205,14 @@ export function transformScenarioInfoRow(row: ScenarioInfoRow): ScenarioInfo {
     officialUrl: row.official_url,
     genre: row.genre,
     memo: row.memo,
+    players: row.players,
     gameSystem: row.game_system,
     production: row.production,
     creator: row.creator,
     duration: row.duration,
     possibleGm: Boolean(row.possible_gm),
     possibleStream: Boolean(row.possible_stream),
-  };
-}
-
-export function scheduleDataToRow(data: Partial<ScheduleData>): Partial<ScheduleDataRow> {
-  return {
-    ...(data.id !== undefined && { id: data.id }),
-    ...(data.contentType !== undefined && { content_type: data.contentType }),
-    ...(data.contentId !== undefined && { content_id: data.contentId }),
-    ...(data.label !== undefined && { label: data.label }),
-    ...(data.status !== undefined && { status: data.status }),
-    ...(data.date !== undefined && { date: data.date }),
-    ...(data.startTime !== undefined && { start_time: data.startTime }),
-    ...(data.position !== undefined && { position: data.position }),
-    ...(data.role !== undefined && { role: data.role }),
-    ...(data.members !== undefined && { members: data.members }),
-    ...(data.pcName !== undefined && { pc_name: data.pcName }),
-    ...(data.gmstName !== undefined && { gmst_name: data.gmstName }),
-    ...(data.server !== undefined && { server: data.server }),
-    ...(data.isStream !== undefined && { is_stream: data.isStream }),
-    ...(data.streamUrl !== undefined && { stream_url: data.streamUrl }),
-    ...(data.endcard !== undefined && { endcard: data.endcard }),
-    ...(data.memo !== undefined && { memo: data.memo }),
-  };
-}
-
-export function passedScenarioToRow(data: Partial<PassedScenario>): Partial<ScheduleDataRow> {
-  return {
-    ...(data.scheduleId !== undefined && { id: data.scheduleId }),
-    ...(data.status !== undefined && { status: data.status }),
-    ...(data.date !== undefined && { date: data.date }),
-    ...(data.pc !== undefined && { pc_name: data.pc }),
-    ...(data.gmst !== undefined && { gmst_name: data.gmst.join(', ') }),
-    ...(data.pl !== undefined && { members: data.pl }),
-    ...(data.streamUrl !== undefined && { stream_url: data.streamUrl }),
-    ...(data.endcardUrl !== undefined && { endcard: data.endcardUrl }),
-  };
-}
-
-export function gmScenarioToRow(data: Partial<GMScenario>): Partial<ScenarioInfoRow> {
-  return {
-    ...(data.id !== undefined && { id: data.id }),
-    ...(data.title !== undefined && { title: data.title }),
-    ...(data.scenarioUrl !== undefined && { official_url: data.scenarioUrl }),
-    ...(data.genre !== undefined && { genre: data.genre }),
-    ...(data.memo !== undefined && { memo: data.memo }),
-    ...(data.gameSystem !== undefined && { game_system: data.gameSystem }),
-    ...(data.production !== undefined && { production: data.production }),
-    ...(data.creator !== undefined && { creator: data.creator }),
-    ...(data.duration !== undefined && { duration: data.duration }),
-    ...(data.possibleGm !== undefined && { possible_gm: data.possibleGm }),
-    ...(data.possibleStream !== undefined && { possible_stream: data.possibleStream }),
+    trailerImage: row.trailer_image,
   };
 }
 
@@ -272,6 +227,7 @@ export function toPassedScenario(schedule: ScheduleData, scenario: ScenarioInfo)
     title: scenario.title,
     date: schedule.date,
     status: schedule.status,
+    role: schedule.role,
     type: getScenarioCategory(scenario.genre, scenario.gameSystem),
     genre: scenario.genre ?? undefined,
     gameSystem: scenario.gameSystem ?? undefined,
@@ -282,7 +238,7 @@ export function toPassedScenario(schedule: ScheduleData, scenario: ScenarioInfo)
     pl: schedule.members ?? [],
     scenarioUrl: scenario.officialUrl ?? undefined,
     streamUrl: schedule.streamUrl ?? undefined,
-    endcardUrl: schedule.endcard ?? undefined,
+    endcardImageUrl: schedule.endcardImage ?? undefined,
   };
 }
 
@@ -300,11 +256,12 @@ export function toGMScenario(info: ScenarioInfo): GMScenario {
     scenarioUrl: info.officialUrl ?? undefined,
     possibleGm: Boolean(info.possibleGm),
     duration: info.duration ?? undefined,
+    plPlayers: info.players ?? undefined,
     playTime: info.duration ?? undefined,
     possibleStream: Boolean(info.possibleStream),
     streamOkng: info.possibleStream,
     memo: info.memo ?? undefined,
     notes: info.memo ?? undefined,
-    cardImageUrl: undefined,
+    cardImageUrl: info.trailerImage ?? undefined,
   };
 }

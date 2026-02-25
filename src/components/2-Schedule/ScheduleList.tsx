@@ -8,6 +8,7 @@
 // ================================================
 
 import { type Event } from "./ScheduleCalendar";
+import { BookOpenText, Gamepad2, Globe } from "lucide-react";
 import { ScheduleCategoryBadge } from "./lib/ScheduleCategoryBadge";
 import calendarStyles from "./css/ScheduleCalendar.module.css";
 import listStyles from './css/ScheduleList.module.css';
@@ -120,7 +121,7 @@ function TableList<T>({
 
 interface ScheduleListProps {
   schedules: Event[]; // 表示するスケジュール一覧
-  categoryFilter: string; // カテゴリフィルター（"all", "🎮", "📚", "🌏"）
+  categoryFilter: string; // カテゴリフィルター（"all", "🎮", "📚"）
   onEventClick: (event: Event) => void; // イベントクリック時のコールバック
 }
 
@@ -140,13 +141,42 @@ function getStartMinutes(timeStr: string | null | undefined): number {
   return hour * 60 + minute;
 }
 
+function formatDateWithWeekday(date?: string | null): string {
+  if (!date) return "未定";
+  const dateValue = new Date(`${date}T00:00:00`);
+  const weekday = new Intl.DateTimeFormat("ja-JP", { weekday: "short" }).format(dateValue);
+  return `${date}（${weekday}）`;
+}
+
+function formatDateTime(event: Event): string {
+  const dateLabel = formatDateWithWeekday(event.date);
+  const timeLabel = event.startTime || "未定";
+  if (dateLabel === "未定" && timeLabel === "未定") return "未定";
+  if (dateLabel === "未定") return timeLabel;
+  return `${dateLabel} ${timeLabel}`;
+}
+
+function getTitleIcon(event: Event) {
+  if (event.contentType === "game") return Gamepad2;
+  if (event.contentType === "scenario") return BookOpenText;
+  if (event.contentType === "real") return Globe;
+  return null;
+}
+
+function formatTitle(event: Event): string {
+  const baseTitle = event.title?.trim() || event.label?.trim() || "-";
+  if (event.contentType === "scenario") return `『${baseTitle}』`;
+  return baseTitle;
+}
+
 export function ScheduleList({ schedules, categoryFilter, onEventClick }: ScheduleListProps) {
   // ==================== カテゴリフィルター適用 ====================
   const filteredSchedules = schedules.filter(event => {
+    if (event.contentType === "real") return false;
+    if (event.category === "🌏") return false;
     if (categoryFilter === "all") return true;
     if (categoryFilter === "🎮") return event.category === "🎮";
     if (categoryFilter === "📚") return event.category === "📚";
-    if (categoryFilter === "🌏") return event.category === "🌏";
     return true;
   });
 
@@ -182,15 +212,7 @@ export function ScheduleList({ schedules, categoryFilter, onEventClick }: Schedu
       headerAlign: 'center',
       className: calendarStyles.tableCellDate, // 既存のdate用スタイルを流用
       headerClassName: calendarStyles.tableHeaderDate, // 既存のdate用スタイルを流用
-      render: (event) => {
-        const date = event.date || "未定";
-        const start = event.startTime || "未定";
-        const end = event.endTime ? `-${event.endTime}` : '';
-        if (date === "未定" && start === "未定") return "未定";
-        if (date === "未定") return `${start}${end}`;
-        if (start === "未定") return date;
-        return `${date} ${start}${end}`;
-      }
+      render: (event) => formatDateTime(event)
     },
     {
       key: 'title',
@@ -199,7 +221,16 @@ export function ScheduleList({ schedules, categoryFilter, onEventClick }: Schedu
       headerAlign: 'center',
       className: calendarStyles.tableCellTitle,
       headerClassName: calendarStyles.tableHeaderTitle,
-      render: (event) => event.title || "-"
+      render: (event) => {
+        const TitleIcon = getTitleIcon(event);
+        const isGameTitle = event.contentType === "game";
+        return (
+          <span className={isGameTitle ? listStyles.titleWithIconGame : listStyles.titleWithIcon}>
+            {TitleIcon && <TitleIcon className={listStyles.titleIcon} aria-hidden="true" />}
+            <span className={listStyles.titleText}>{formatTitle(event)}</span>
+          </span>
+        );
+      }
     },
     {
       key: 'category',

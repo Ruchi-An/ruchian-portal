@@ -18,9 +18,6 @@ import {
   toGMScenario,
 } from '../types/database';
 
-export type { ScheduleData, ScheduleBadge, PassedScenario, GMScenario };
-export type Event = ScheduleData;
-
 type DataStore = {
   schedules: ScheduleData[];
   badges: ScheduleBadge[];
@@ -87,7 +84,7 @@ export function useDataManager() {
       ] = await Promise.all([
         supabase
           .from('schedules')
-          .select('id, content_type, content_id, label, status, date, start_time, position, role, members, pc_name, gmst_name, server, is_stream, stream_url, endcard, memo')
+          .select('id, content_type, content_id, label, status, date, start_time, position, role, members, pc_name, gmst_name, server, is_stream, stream_url, endcard_image, memo')
           .order('date', { ascending: true, nullsFirst: false }),
         supabase
           .from('days_status')
@@ -98,7 +95,7 @@ export function useDataManager() {
           .select('id, title, official_url, genre, memo'),
         supabase
           .from('scenario_info')
-          .select('id, title, official_url, genre, memo, game_system, production, creator, duration, possible_gm, possible_stream'),
+          .select('id, title, official_url, genre, memo, players, game_system, production, creator, duration, possible_gm, possible_stream, trailer_image'),
       ]);
 
       if (schedulesRes.error) throw schedulesRes.error;
@@ -161,7 +158,7 @@ export function useDataManager() {
 
       const scenarioSchedules = schedules
         .filter((s) => s.contentType === 'scenario' && s.contentId)
-        .filter((s) => s.status === 'planned' || s.status === 'done');
+        .filter((s) => s.status === 'pending' || s.status === 'planned' || s.status === 'done');
 
       const passedScenarios: PassedScenario[] = scenarioSchedules
         .map((schedule) => {
@@ -172,9 +169,31 @@ export function useDataManager() {
         })
         .filter((item): item is PassedScenario => Boolean(item));
 
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
       const gmScenarios: GMScenario[] = scenarioInfos
         .filter((info) => info.possibleGm)
-        .map((info) => toGMScenario(info));
+        .map((info) => {
+          const gmPlayCount = schedules.filter(
+            (schedule) =>
+              schedule.contentType === 'scenario'
+              && schedule.contentId === info.id
+              && schedule.role === 'GM'
+              && schedule.status === 'done'
+              && (() => {
+                if (!schedule.date) return false;
+                const parsed = new Date(`${schedule.date}T00:00:00`);
+                if (Number.isNaN(parsed.getTime())) return false;
+                return parsed.getTime() <= today.getTime();
+              })(),
+          ).length;
+
+          return {
+            ...toGMScenario(info),
+            gmPlayCount,
+          };
+        });
 
       setData({ schedules, badges, passedScenarios, gmScenarios });
     } catch (error) {
