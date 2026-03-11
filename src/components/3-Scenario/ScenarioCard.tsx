@@ -134,7 +134,17 @@ function ScenarioCardList({
                         </div>
                         <div className={styles.detailItem}>
                           <span className={styles.detailLabel}>GM/ST:</span>
-                          <span className={styles.detailValue}>{card.gmst?.join(', ') || '-'}</span>
+                          {card.gmst?.length ? (
+                            <div className={styles.detailTagList}>
+                              {card.gmst.map((member, idx) => (
+                                <span key={idx} className={styles.memberTag}>
+                                  {member}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className={styles.detailValue}>-</span>
+                          )}
                         </div>
                         <div className={styles.detailItem}>
                           <span className={styles.detailLabel}>同卓PL:</span>

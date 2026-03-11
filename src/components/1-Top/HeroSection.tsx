@@ -32,7 +32,6 @@ export default function HeroSection() {
     const todayKey = formatTodayKey(new Date());
     return schedules
       .filter((schedule: ScheduleItem) => schedule.date === todayKey)
-      .filter((schedule: ScheduleItem) => schedule.status === 'planned' || schedule.status === 'done')
       .sort((a: ScheduleItem, b: ScheduleItem) => {
         if (!a.startTime) return 1;
         if (!b.startTime) return -1;

@@ -55,17 +55,26 @@ export function EventDetailModal({ event, isOpen, onClose }: Props) {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", fitTitle);
     };
-  }, [isOpen, event?.contentType, event?.title, event?.label]);
+  }, [isOpen, event?.contentType, event?.title, event?.honmyo, event?.label]);
 
   if (!isOpen || !event) return null;
   const title = event.title?.trim() || event.label?.trim() || "-";
-  const label = event.label?.trim() || event.title?.trim() || "-";
+  const label = event.label?.trim() || "-";
+  const realTitle = event.label?.trim() || event.title?.trim() || "-";
+  const honmyo = event.honmyo?.trim();
   const isGame = event.contentType === "game";
   const isScenario = event.contentType === "scenario";
   const isReal = event.contentType === "real";
 
   const headerIcon = isGame ? Gamepad2 : isScenario ? BookOpenText : Globe;
-  const headerTitle = isScenario ? `『${title}』` : isReal ? label : title;
+  const scenarioTitleBase = honmyo || title;
+  const scenarioRoleSuffix = event.role ?? "";
+  const gameTitle = honmyo || title || label;
+  const headerTitle = isScenario
+    ? `『${scenarioTitleBase}』${scenarioRoleSuffix}`
+    : isGame
+      ? gameTitle
+      : realTitle;
 
   const dateLabel = (() => {
     if (!event.date) return "未定";
@@ -76,7 +85,12 @@ export function EventDetailModal({ event, isOpen, onClose }: Props) {
   const timeLabel = event.startTime || "未定";
   const dateTimeLabel = `${dateLabel} ${timeLabel}`;
   const streamLabel = event.isStream ? "あり" : "なし";
-  const genreLabel = event.genre?.trim() || "-";
+  const iconLabel = (() => {
+    const icon = event.icon?.trim();
+    const eventLabel = event.label?.trim();
+    if (icon && eventLabel) return `${icon}${eventLabel}`;
+    return eventLabel || icon || "-";
+  })();
   const memoLabel = event.memo?.trim() || "-";
   const urlLabel = event.officialUrl?.trim() || "-";
   const roleLabel = event.role || "-";
@@ -124,7 +138,7 @@ export function EventDetailModal({ event, isOpen, onClose }: Props) {
                   <Folder className={styles.modalLabelIcon} aria-hidden="true" />
                   <span>ジャンル</span>
                 </span>
-                <span className={styles.modalValue}>{genreLabel}</span>
+                <span className={styles.modalValue}>{iconLabel}</span>
               </div>
               <div className={styles.modalRow}>
                 <span className={styles.modalLabel}>
@@ -162,7 +176,7 @@ export function EventDetailModal({ event, isOpen, onClose }: Props) {
                   <Folder className={styles.modalLabelIcon} aria-hidden="true" />
                   <span>ジャンル</span>
                 </span>
-                <span className={styles.modalValue}>{genreLabel}</span>
+                <span className={styles.modalValue}>{iconLabel}</span>
               </div>
               <div className={styles.modalRow}>
                 <span className={styles.modalLabel}>

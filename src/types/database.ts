@@ -7,7 +7,8 @@ export type ScheduleDataRow = {
   content_type: ContentType;
   content_id: string | null;
   label?: string | null;
-  status: ScheduleStatus;
+  icon?: string | null;
+  status?: ScheduleStatus | null;
   date?: string | null;
   start_time?: string | null;
   position?: 'solo' | 'sponsor' | 'joining' | null;
@@ -27,6 +28,7 @@ export type ScheduleData = {
   contentType: ContentType;
   contentId: string | null;
   label?: string | null;
+  icon?: string | null;
   status: ScheduleStatus;
   date?: string | null;
   startTime?: string | null;
@@ -41,6 +43,7 @@ export type ScheduleData = {
   endcardImage?: string | null;
   memo?: string | null;
   title: string;
+  honmyo?: string | null;
   gameTitle?: string | null;
   scenarioTitle?: string | null;
   genre?: string | null;
@@ -74,6 +77,8 @@ export type ScheduleBadge = {
 export type ScenarioInfoRow = {
   id: string;
   title: string;
+  honmyo?: string | null;
+  icon?: string | null;
   official_url?: string | null;
   genre?: string | null;
   memo?: string | null;
@@ -90,6 +95,8 @@ export type ScenarioInfoRow = {
 export type ScenarioInfo = {
   id: string;
   title: string;
+  honmyo?: string | null;
+  icon?: string | null;
   officialUrl?: string | null;
   genre?: string | null;
   memo?: string | null;
@@ -159,13 +166,15 @@ function getScenarioCategory(genre?: string | null, gameSystem?: string | null):
 
 export function transformScheduleDataRow(row: ScheduleDataRow): ScheduleData {
   const title = row.memo?.trim() || 'タイトル未設定';
+  const status: ScheduleStatus = row.status ?? (row.date ? 'planned' : 'pending');
   return {
     id: row.id,
     contentType: row.content_type,
     contentId: row.content_id,
     label: row.label,
-    status: row.status,
-    date: row.status === 'pending' ? null : row.date,
+    icon: row.icon,
+    status,
+    date: status === 'pending' ? null : row.date,
     startTime: row.start_time,
     position: row.position,
     role: row.role,
@@ -178,6 +187,7 @@ export function transformScheduleDataRow(row: ScheduleDataRow): ScheduleData {
     endcardImage: row.endcard_image,
     memo: row.memo,
     title,
+    honmyo: null,
     category: row.content_type === 'scenario' ? '📚' : '🎮',
     type: row.role ?? (row.content_type === 'scenario' ? 'SCENARIO' : 'GAME'),
     endTime: null,
@@ -202,6 +212,8 @@ export function transformScenarioInfoRow(row: ScenarioInfoRow): ScenarioInfo {
   return {
     id: row.id,
     title: row.title,
+    honmyo: row.honmyo,
+    icon: row.icon,
     officialUrl: row.official_url,
     genre: row.genre,
     memo: row.memo,

@@ -57,4 +57,4 @@ supabase db push
   - `fc-content`
   - `fc-event`
   - `fc-day`
-- `release: true` のノートのみ同期
+- `release` 項目は同期条件に使用しません（`fileClass` などの必須条件のみ判定）

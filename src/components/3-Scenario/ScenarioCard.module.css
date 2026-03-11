@@ -420,6 +420,18 @@
   white-space: nowrap;
 }
 
+.detailTagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.detailTagList .memberTag {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 /* リンクエリア：URL等のボタン */
 .detailsLinks {
   display: flex;

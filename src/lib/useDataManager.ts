@@ -84,7 +84,7 @@ export function useDataManager() {
       ] = await Promise.all([
         supabase
           .from('schedules')
-          .select('id, content_type, content_id, label, status, date, start_time, position, role, members, pc_name, gmst_name, server, is_stream, stream_url, endcard_image, memo')
+          .select('*')
           .order('date', { ascending: true, nullsFirst: false }),
         supabase
           .from('days_status')
@@ -92,10 +92,10 @@ export function useDataManager() {
           .order('date', { ascending: true }),
         supabase
           .from('game_info')
-          .select('id, title, official_url, genre, memo'),
+          .select('id, title, honmyo, icon, official_url, genre, memo'),
         supabase
           .from('scenario_info')
-          .select('id, title, official_url, genre, memo, players, game_system, production, creator, duration, possible_gm, possible_stream, trailer_image'),
+          .select('id, title, honmyo, icon, official_url, genre, memo, players, game_system, production, creator, duration, possible_gm, possible_stream, trailer_image'),
       ]);
 
       if (schedulesRes.error) throw schedulesRes.error;
@@ -103,10 +103,18 @@ export function useDataManager() {
       if (gamesRes.error) throw gamesRes.error;
       if (scenarioInfoRes.error) throw scenarioInfoRes.error;
 
-      const gameMap = new Map<string, { title: string; official_url?: string | null; genre?: string | null }>();
+      const gameMap = new Map<string, {
+        title: string;
+        honmyo?: string | null;
+        icon?: string | null;
+        official_url?: string | null;
+        genre?: string | null;
+      }>();
       for (const g of gamesRes.data ?? []) {
         gameMap.set(g.id, {
           title: g.title,
+          honmyo: g.honmyo,
+          icon: g.icon,
           official_url: g.official_url,
           genre: g.genre,
         });
@@ -134,6 +142,8 @@ export function useDataManager() {
           return {
             ...base,
             title,
+            honmyo: game?.honmyo ?? null,
+            icon: base.icon ?? game?.icon ?? null,
             gameTitle: title,
             officialUrl: game?.official_url ?? null,
             genre: game?.genre ?? null,
@@ -146,6 +156,8 @@ export function useDataManager() {
         return {
           ...base,
           title,
+          honmyo: scenario?.honmyo ?? null,
+          icon: base.icon ?? scenario?.icon ?? null,
           scenarioTitle: title,
           officialUrl: scenario?.officialUrl ?? null,
           genre: scenario?.genre ?? null,
@@ -157,8 +169,7 @@ export function useDataManager() {
       const badges: ScheduleBadge[] = ((badgesRes.data as ScheduleBadgeRow[] | null) ?? []).map((row) => transformScheduleBadgeRow(row));
 
       const scenarioSchedules = schedules
-        .filter((s) => s.contentType === 'scenario' && s.contentId)
-        .filter((s) => s.status === 'pending' || s.status === 'planned' || s.status === 'done');
+        .filter((s) => s.contentType === 'scenario' && s.contentId);
 
       const passedScenarios: PassedScenario[] = scenarioSchedules
         .map((schedule) => {
@@ -180,7 +191,6 @@ export function useDataManager() {
               schedule.contentType === 'scenario'
               && schedule.contentId === info.id
               && schedule.role === 'GM'
-              && schedule.status === 'done'
               && (() => {
                 if (!schedule.date) return false;
                 const parsed = new Date(`${schedule.date}T00:00:00`);

@@ -12,32 +12,20 @@ export function useScheduleGroups(schedules: Event[]) {
   const pendingSchedules: Event[] = [];
 
   schedules.forEach((schedule) => {
-    if (!schedule.date || schedule.status === 'pending') {
+    if (!schedule.date) {
       pendingSchedules.push(schedule);
       return;
     }
 
-    if (schedule.date) {
-      if (schedule.status === 'planned' || schedule.status === 'done') {
-        if (!eventsByDate[schedule.date]) {
-          eventsByDate[schedule.date] = [];
-        }
-        eventsByDate[schedule.date].push(schedule);
-      }
-
-      if (schedule.date < todayKey) {
-        pastSchedules.push(schedule);
-      } else {
-        futureSchedules.push(schedule);
-      }
-
-      return;
+    if (!eventsByDate[schedule.date]) {
+      eventsByDate[schedule.date] = [];
     }
+    eventsByDate[schedule.date].push(schedule);
 
-    if (schedule.status === 'planned') {
-      futureSchedules.push(schedule);
-    } else if (schedule.status === 'done') {
+    if (schedule.date < todayKey) {
       pastSchedules.push(schedule);
+    } else {
+      futureSchedules.push(schedule);
     }
   });
 

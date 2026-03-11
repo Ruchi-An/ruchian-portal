@@ -45,14 +45,12 @@ function formatStartTime(startTime: string | number | undefined): string | null 
 
 type EventFrontmatter = {
   id?: string;
-  release?: boolean;
   fileClass?: string;
   content?: string;
-  status: 'pending' | 'planned' | 'done';
   date?: string;
   label?: string;
+  icon?: string;
   start_time?: string | number;
-  position?: 'solo' | 'sponsor' | 'joining';
   role?: 'GM' | 'ST' | 'PL';
   members?: string[];
   pc_name?: string;
@@ -67,9 +65,10 @@ type EventFrontmatter = {
 
 type ContentFrontmatter = {
   id?: string;
-  release?: boolean;
   fileClass?: string;
   type: 'game' | 'scenario';
+  honmyo?: string;
+  icon?: string;
   official_url?: string;
   genre?: string;
   memo?: string;
@@ -85,7 +84,6 @@ type ContentFrontmatter = {
 
 type DayFrontmatter = {
   id?: string;
-  release?: boolean;
   fileClass?: string;
   date: string;
   work_off?: boolean;
@@ -369,7 +367,6 @@ async function syncContents(): Promise<ContentCache> {
       const { data: content, title } = readFrontmatter<ContentFrontmatter>(filePath);
 
       // 同期条件チェック
-      if (content.release !== true) continue;
       if (content.fileClass !== 'fc-content') continue;
       if (!content.type || (content.type !== 'game' && content.type !== 'scenario')) {
         console.warn(`⚠️  Invalid type: ${filePath}`);
@@ -389,6 +386,8 @@ async function syncContents(): Promise<ContentCache> {
           {
             id,
             title,
+            honmyo: content.honmyo ?? null,
+            icon: content.icon ?? null,
             official_url: content.official_url ?? null,
             genre: content.genre ?? null,
             memo: content.memo ?? null,
@@ -406,6 +405,8 @@ async function syncContents(): Promise<ContentCache> {
         {
           id,
           title,
+          honmyo: content.honmyo ?? null,
+          icon: content.icon ?? null,
           official_url: content.official_url ?? null,
           genre: content.genre ?? null,
           memo: content.memo ?? null,
@@ -444,18 +445,7 @@ async function syncEvents(contentCache: ContentCache) {
       const { data: event } = readFrontmatter<EventFrontmatter>(filePath);
 
       // 同期条件チェック
-      if (event.release !== true) continue;
       if (event.fileClass !== 'fc-event') continue;
-      if (!event.status || !['pending', 'planned', 'done'].includes(event.status)) {
-        console.warn(`⚠️  Invalid status: ${filePath}`);
-        continue;
-      }
-
-      // pending以外は日付必須
-      if (event.status !== 'pending' && !event.date) {
-        console.warn(`⚠️  Missing date for non-pending event: ${filePath}`);
-        continue;
-      }
 
       const fileName = path.basename(filePath, '.md');
       const id = event.id || generateId(fileName);
@@ -480,11 +470,10 @@ async function syncEvents(contentCache: ContentCache) {
           id,
           content_type,
           content_id,
-          status: event.status,
-          date: event.status === 'pending' ? null : event.date ?? null,
+          date: event.date ?? null,
           label: event.label ?? null,
+          icon: event.icon ?? null,
           start_time: formattedStartTime,
-          position: event.position ?? null,
           role: event.role ?? null,
           members: event.members ?? [],
           pc_name: event.pc_name ?? null,
@@ -543,7 +532,6 @@ async function syncDays() {
       const { data: day } = readFrontmatter<DayFrontmatter>(filePath);
 
       // 同期条件チェック
-      if (day.release !== true) continue;
       if (day.fileClass !== 'fc-day') continue;
       if (!day.date) {
         console.warn(`⚠️  Missing date: ${filePath}`);
