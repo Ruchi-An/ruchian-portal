@@ -155,8 +155,6 @@ export type GMScenario = {
   notes?: string;
 };
 
-export type GMScenarioCard = GMScenario;
-
 function getScenarioCategory(genre?: string | null, gameSystem?: string | null): string {
   const base = `${genre ?? ''} ${gameSystem ?? ''}`;
   if (/マダミス|マーダー|Murder/i.test(base)) return '📕';

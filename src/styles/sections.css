@@ -15,21 +15,21 @@
 
 @media (max-width: 900px) {
   .homeGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 20px;
     row-gap: 24px;
-    margin: -200px auto 36px; /* さらに上に寄せる */
+    margin: 12px auto 36px;
     padding: 0 16px;
   }
 }
 
 @media (max-width: 640px) {
   .homeGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    row-gap: 10px;
-    margin: -400px auto 12px;
-    padding: 0 2vw;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    row-gap: 12px;
+    margin: 10px auto 18px;
+    padding: 0 10px;
     justify-items: stretch;
   }
 }
@@ -167,6 +167,84 @@
   gap: 12px;
 }
 
+.wishlistCard {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: min(860px, 100%);
+  justify-self: center;
+  border-color: rgba(255, 243, 166, 0.92);
+  background:
+    radial-gradient(circle at top left, rgba(255, 229, 104, 0.36), transparent 34%),
+    radial-gradient(circle at top right, rgba(195, 225, 255, 0.22), transparent 40%),
+    linear-gradient(135deg, rgba(255, 250, 221, 0.26), rgba(255, 234, 128, 0.26) 42%, rgba(233, 245, 255, 0.18));
+  box-shadow:
+    0 14px 38px rgba(48, 72, 117, 0.14),
+    0 0 30px rgba(255, 228, 103, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.54);
+  backdrop-filter: blur(24px) saturate(138%);
+  -webkit-backdrop-filter: blur(24px) saturate(138%);
+}
+
+.wishlistDescription {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.98);
+  text-shadow: 0 1px 8px rgba(70, 95, 150, 0.28);
+}
+
+.wishlistActionRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  gap: 14px;
+}
+
+.socialButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: clamp(0.82rem, 1.8vw, 1rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  border: 2px solid rgba(248, 250, 255, 0.86);
+  color: #14213d;
+  text-shadow: none;
+  box-shadow:
+    0 6px 16px rgba(62, 100, 163, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.58);
+}
+
+.socialButton:visited,
+.socialButton:active,
+.socialButton:link {
+  color: #14213d;
+}
+
+.socialButton:hover {
+  color: #0d1730;
+  transform: translateY(-3px) scale(1.01);
+  filter: saturate(1.04) brightness(1.05);
+}
+
+.socialButton--wishlist {
+  background: linear-gradient(135deg, rgba(255, 232, 122, 0.84), rgba(255, 252, 214, 0.72));
+}
+
+.socialButton--youtube {
+  background: linear-gradient(135deg, rgba(255, 241, 170, 0.80), rgba(219, 236, 255, 0.66));
+}
+
+.socialButton--x {
+  background: linear-gradient(135deg, rgba(236, 244, 255, 0.74), rgba(255, 248, 196, 0.72));
+}
+
 .todayScheduleWrap {
   margin-top: 14px;
   padding: 10px;
@@ -251,6 +329,10 @@
     width: 100%;
     max-width: 260px;
     text-align: center;
+  }
+
+  .wishlistActionRow {
+    grid-template-columns: 1fr;
   }
 }
 

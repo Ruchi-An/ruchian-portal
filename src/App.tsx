@@ -1,20 +1,20 @@
 import { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+import HomePage from './components/home/HomePage.tsx';
+import Header from './components/layout/Header.tsx';
 import { DataProvider } from './lib/DataContext.tsx';
-import Header from './components/0-Header/Header.tsx';
-import Footer from './components/0-Footer/Footer.tsx';
-import HeroSection from './components/1-Top/HeroSection.tsx';
-import { ScheduleSection } from './components/1-Top/ScheduleSection.tsx';
-import { ScenarioSection } from './components/1-Top/ScenarioSection.tsx';
 
 const SchedulePage = lazy(() =>
-  import('./components/2-Schedule/Schedule.tsx').then((module) => ({ default: module.SchedulePage })),
+  import('./components/schedule/SchedulePage.tsx').then((module) => ({ default: module.SchedulePage })),
 );
 const ScenarioPage = lazy(() =>
-  import('./components/3-Scenario/Scenario.tsx').then((module) => ({ default: module.ScenarioPage })),
+  import('./components/scenario/ScenarioPage.tsx').then((module) => ({ default: module.ScenarioPage })),
 );
 const GMScenarioDetailPage = lazy(() =>
-  import('./components/3-Scenario/GMScenarioDetail.tsx').then((module) => ({ default: module.GMScenarioDetailPage })),
+  import('./components/scenario/GMScenarioDetailPage.tsx').then((module) => ({ default: module.GMScenarioDetailPage })),
+);
+const ScenarioDetailPage = lazy(() =>
+  import('./components/scenario/ScenarioDetailPage.tsx').then((module) => ({ default: module.ScenarioDetailPage })),
 );
 
 function RouteLoader() {
@@ -26,7 +26,7 @@ export default function App() {
     <DataProvider>
       <Header />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<HomePage />} />
         <Route
           path="/schedule"
           element={(
@@ -44,6 +44,14 @@ export default function App() {
           )}
         />
         <Route
+          path="/scenario/detail/:id"
+          element={(
+            <Suspense fallback={<RouteLoader />}>
+              <ScenarioDetailPage />
+            </Suspense>
+          )}
+        />
+        <Route
           path="/scenario/gm/:id"
           element={(
             <Suspense fallback={<RouteLoader />}>
@@ -53,18 +61,5 @@ export default function App() {
         />
       </Routes>
     </DataProvider>
-  );
-}
-
-function Home() {
-  return (
-    <>
-      <HeroSection />
-      <div className="homeGrid">
-        <ScheduleSection />
-        <ScenarioSection />
-      </div>
-      <Footer />
-    </>
   );
 }

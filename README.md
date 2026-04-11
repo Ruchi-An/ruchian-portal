@@ -1,91 +1,85 @@
-# React + TypeScript + Vite
+# Ruchian Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+RuChiAnさん向けの **React + TypeScript + Vite** 製ポータルサイトです。
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ できること
 
-## React Compiler
+- `/` : 今週のスケジュール画像と外部リンク表示
+- `/schedule` : カレンダー表示、未来予定、過去予定の確認
+- `/scenario` : 通過予定 / 通過済み / GM可能シナリオの確認
+- `/scenario/gm/:id` : GM可能シナリオの詳細表示
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🚀 開発コマンド
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    ```js
-    // eslint.config.js
-    import reactX from 'eslint-plugin-react-x'
-    import reactDom from 'eslint-plugin-react-dom'
-
-    export default defineConfig([
-      globalIgnores(['dist']),
-      {
-        files: ['**/*.{ts,tsx}'],
-        extends: [
-          // Other configs...
-          // Enable lint rules for React
-          reactX.configs['recommended-typescript'],
-          // Enable lint rules for React DOM
-          reactDom.configs.recommended,
-        ],
-        languageOptions: {
-          parserOptions: {
-            project: ['./tsconfig.node.json', './tsconfig.app.json'],
-            tsconfigRootDir: import.meta.dirname,
-          },
-          // other options...
-        },
-      },
-    ])
-    ```
-
-    ## App Structure (Added)
-
-    - Home: HeroSection → StarMapNavSection → ScheduleSection → ScenarioSection → TakanashiSection → ProfileSection
-    - Dedicated pages:
-      - `/schedule` — Schedule details
-      - `/scenario` — Scenario details
-      - `/takanashi` — Takanashi details
-      - `/profile` — Profile details
-
-    The star map in the Home page links to these pages.
-
-    ### Run locally
-
-    ```bash
-    npm install
-    npm run dev
-    ```
-
-    ````
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
+npm run lint
+npm run build
 ```
+
+---
+
+## 📁 フォルダの見方
+
+初心者向けに、**「どこに何を書くか」** を先にまとめます。
+
+| パス | 役割 |
+| --- | --- |
+| `src/App.tsx` | 画面遷移だけをまとめた入口 |
+| `src/lib/` | Supabase接続、データ取得、共通フック |
+| `src/types/database.ts` | アプリ全体で使う型定義 |
+| `src/components/layout/` | ヘッダー・フッターなど共通レイアウト |
+| `src/components/home/` | ホーム画面用の部品 |
+| `src/components/schedule/` | スケジュール画面一式 |
+| `src/components/scenario/` | シナリオ画面一式 |
+| `src/components/common/` | 複数ページで使い回す共通UI |
+| `public/weekly-schedule/` | トップに出す週間画像 |
+
+> フォルダ名を**役割ベース**に変えたので、前より見分けやすくなっています。
+
+---
+
+## 🧭 迷ったときの編集場所
+
+### 文言やリンクを変えたい
+- `src/components/home/HomePage.tsx`
+
+### 週間スケジュール画像を変えたい
+- `public/weekly-schedule/current.png`
+
+### スケジュール画面を直したい
+- `src/components/schedule/`
+
+### シナリオ画面を直したい
+- `src/components/scenario/`
+
+### Supabaseから取るデータの形を直したい
+- `src/lib/useDataManager.ts`
+- `src/types/database.ts`
+
+---
+
+## 🔄 データの流れ
+
+1. `src/lib/supabaseClient.ts` で接続
+2. `src/lib/useDataManager.ts` で取得して整形
+3. `src/lib/DataContext.tsx` で画面全体に渡す
+4. 各コンポーネントで `useData()` を使って表示
+
+---
+
+## ✅ 今回の整理内容
+
+- 使っていないコンポーネントと空フォルダを削除
+- 重複していた分岐やリスト表示ロジックを簡略化
+- 小さすぎる helper は `HomePage.tsx`・`SchedulePage.tsx`・`ScenarioPage.tsx` にまとめて、ファイル数を削減
+- 共通フック `useIsNarrowScreen` を `src/lib/` に移動
+- README を実際の構成に合わせて更新
+
+これで、**「ページごとの役割」と「触るべきファイル」** が追いやすくなっています。
+
