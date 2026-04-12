@@ -310,7 +310,7 @@ export function ScenarioPage() {
             onRowClick={openScenarioDetail}
             emptyMessage={activeTab === 'planned' ? '通過予定シナリオはまだありません。' : '通過済みシナリオはまだありません。'}
             getRowKey={(scenario) => scenario.id}
-            gridTemplateColumns="clamp(40px, 10vw, 70px) minmax(0, 1fr) clamp(80px, 15vw, 200px)"
+            gridTemplateColumns="clamp(30px, 8vw, 70px) minmax(0, 1fr) clamp(80px, 15vw, 200px)"
           />
         )}
       </div>

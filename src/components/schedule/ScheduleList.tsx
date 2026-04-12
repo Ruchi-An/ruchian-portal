@@ -159,7 +159,7 @@ export function ScheduleList({ schedules, categoryFilter, onEventClick }: Schedu
       onRowClick={onEventClick}
       emptyMessage="該当する予定がありません"
       getRowKey={(event, index) => `${event.id}-${index}`}
-      gridTemplateColumns="clamp(130px, 34vw, 240px) minmax(0, 1fr)"
+      gridTemplateColumns="clamp(118px, 25vw, 240px) minmax(0, 1fr)"
     />
   );
 }
