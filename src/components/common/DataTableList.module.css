@@ -90,14 +90,6 @@
   text-align: left;
 }
 
-.headerCell.align-left {
-  padding-left: clamp(24px, 8vw, 100px);
-}
-
-.headerTitleOffset {
-  margin-left: clamp(24px, 10vw, 200px);
-}
-
 .align-center {
   justify-content: center;
   text-align: center;
@@ -106,6 +98,27 @@
 .align-right {
   justify-content: flex-end;
   text-align: right;
+}
+
+/* 列区切り線（No.・タイトル列などの右端に適用） */
+.columnDivider {
+  border-right: 1px solid rgba(150, 200, 255, 0.35);
+  padding-right: clamp(6px, 1.5vw, 14px);
+  margin-right: clamp(4px, 1vw, 10px);
+}
+
+.dateLabel {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.dateTimeLabel {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.timeText {
+  color: rgba(255, 255, 255, 0.95);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
 
 .categoryBadge {

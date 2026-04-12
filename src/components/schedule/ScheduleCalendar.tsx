@@ -33,8 +33,8 @@ type CalendarCell = {
 
 // ==================== 定数 ====================
 
-/** 曜日ラベル */
-const weekdayLabels = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+/** 曜日ラベル（月曜始まり） */
+const weekdayLabels = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
 const REAL_ICON = "🌏";
 const GENRE_ICON_FALLBACK = "✨";
@@ -130,7 +130,7 @@ export function ScheduleCalendar({
   const holidays = new Holidays('JP');
   
   // カレンダーの計算
-  const firstDayOfMonth = new Date(year, monthIndex, 1).getDay(); // 月初の曜日（0-6）
+  const firstDayOfMonth = (new Date(year, monthIndex, 1).getDay() + 6) % 7; // 月初の曜日（0=月曜, 6=日曜）
   const daysInMonth = new Date(year, monthIndex + 1, 0).getDate(); // その月の日数
   const totalCells = Math.ceil((firstDayOfMonth + daysInMonth) / 7) * 7; // グリッド全体のセル数（7の倍数）
 

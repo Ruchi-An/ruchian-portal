@@ -6,9 +6,11 @@ export interface ColumnDef<T = unknown> {
   header: string;
   align?: 'left' | 'center' | 'right';
   headerAlign?: 'left' | 'center' | 'right';
-  render: (item: T) => ReactNode;
+  render: (item: T, index: number) => ReactNode;
   className?: string;
   headerClassName?: string;
+  /** 列の右端に区切り線を表示する */
+  divider?: boolean;
 }
 
 interface DataTableListProps<T> {
@@ -56,7 +58,7 @@ export function DataTableList<T>({
           {columns.map((column) => (
             <span
               key={column.key}
-              className={`${styles.headerCell} ${styles[`align-${column.headerAlign || 'center'}`]} ${column.headerClassName || ''}`}
+              className={`${styles.headerCell} ${styles[`align-${column.headerAlign || 'center'}`]}${column.divider ? ` ${styles.columnDivider}` : ''} ${column.headerClassName || ''}`}
             >
               {column.header}
             </span>
@@ -77,9 +79,9 @@ export function DataTableList<T>({
               {columns.map((column) => (
                 <span
                   key={column.key}
-                  className={`${styles.cell} ${styles[`align-${column.align || 'left'}`]} ${column.className || ''}`}
+                  className={`${styles.cell} ${styles[`align-${column.align || 'left'}`]}${column.divider ? ` ${styles.columnDivider}` : ''} ${column.className || ''}`}
                 >
-                  {column.render(item)}
+                  {column.render(item, index)}
                 </span>
               ))}
             </div>

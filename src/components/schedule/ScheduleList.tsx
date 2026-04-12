@@ -8,47 +8,11 @@
 // ================================================
 
 import { type Event } from './ScheduleCalendar';
-import { BookOpenText, Gamepad2, Globe, Shapes, type LucideIcon } from 'lucide-react';
+import { BookOpenText, Gamepad2, Globe } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { DataTableList, type ColumnDef } from '../common/DataTableList';
 import listStyles from '../common/DataTableList.module.css';
 import calendarStyles from './css/ScheduleCalendar.module.css';
-
-type ScheduleCategoryMeta = {
-  label: string;
-  Icon: LucideIcon;
-};
-
-function getScheduleCategoryMeta(category?: string | null): ScheduleCategoryMeta {
-  if (category === '🎮') return { label: 'ゲーム', Icon: Gamepad2 };
-  if (category === '📚') return { label: 'シナリオ', Icon: BookOpenText };
-  if (category === '🌏') return { label: 'リアル', Icon: Globe };
-  return { label: '未分類', Icon: Shapes };
-}
-
-type ScheduleCategoryBadgeProps = {
-  category?: string | null;
-  showLabel?: boolean;
-  className?: string;
-  iconClassName?: string;
-  labelClassName?: string;
-};
-
-function ScheduleCategoryBadge({
-  category,
-  showLabel = true,
-  className,
-  iconClassName,
-  labelClassName,
-}: ScheduleCategoryBadgeProps) {
-  const { label, Icon } = getScheduleCategoryMeta(category);
-
-  return (
-    <span className={className} title={label} aria-label={label}>
-      <Icon className={iconClassName} size={16} strokeWidth={2} aria-hidden="true" />
-      {showLabel && <span className={labelClassName}>{label}</span>}
-    </span>
-  );
-}
 
 // ==================== ユーティリティ関数 ====================
 
@@ -82,19 +46,31 @@ function getStartMinutes(timeStr: string | null | undefined): number {
   return hour * 60 + minute;
 }
 
-function formatDateWithWeekday(date?: string | null): string {
-  if (!date) return "未定";
+function formatDateWithWeekday(date?: string | null): ReactNode {
+  if (!date) return '未定';
   const dateValue = new Date(`${date}T00:00:00`);
-  const weekday = new Intl.DateTimeFormat("ja-JP", { weekday: "short" }).format(dateValue);
-  return `${date}（${weekday}）`;
+  const weekday = new Intl.DateTimeFormat('ja-JP', { weekday: 'short' }).format(dateValue);
+
+  return (
+    <span className={listStyles.dateLabel}>
+      {date}（{weekday}）
+    </span>
+  );
 }
 
-function formatDateTime(event: Event): string {
+function formatDateTime(event: Event): ReactNode {
   const dateLabel = formatDateWithWeekday(event.date);
-  const timeLabel = event.startTime || "未定";
-  if (dateLabel === "未定" && timeLabel === "未定") return "未定";
-  if (dateLabel === "未定") return timeLabel;
-  return `${dateLabel} ${timeLabel}`;
+  const timeLabel = event.startTime || '未定';
+
+  if (!event.date && timeLabel === '未定') return '未定';
+  if (!event.date) return <span className={listStyles.timeText}>{timeLabel}</span>;
+
+  return (
+    <span className={listStyles.dateTimeLabel}>
+      {dateLabel}
+      <span className={listStyles.timeText}>{timeLabel}</span>
+    </span>
+  );
 }
 
 function getTitleIcon(event: Event) {
@@ -149,19 +125,20 @@ export function ScheduleList({ schedules, categoryFilter, onEventClick }: Schedu
     {
       key: 'datetime',
       header: '日程',
-      align: 'left',
-      headerAlign: 'left',
-      className: calendarStyles.tableCellDate, // 既存のdate用スタイルを流用
-      headerClassName: calendarStyles.tableHeaderDate, // 既存のdate用スタイルを流用
+      align: 'center',
+      headerAlign: 'center',
+      className: calendarStyles.tableCellDate,
+      headerClassName: calendarStyles.tableHeaderDate,
+      divider: true,
       render: (event) => formatDateTime(event)
     },
     {
       key: 'title',
       header: 'タイトル',
       align: 'left',
-      headerAlign: 'left',
+      headerAlign: 'center',
       className: calendarStyles.tableCellTitle,
-      headerClassName: `${calendarStyles.tableHeaderTitle} ${listStyles.headerTitleOffset}`,
+      headerClassName: calendarStyles.tableHeaderTitle,
       render: (event) => {
         const TitleIcon = getTitleIcon(event);
         const isGameTitle = event.contentType === "game";
@@ -172,22 +149,6 @@ export function ScheduleList({ schedules, categoryFilter, onEventClick }: Schedu
           </span>
         );
       }
-    },
-    {
-      key: 'category',
-      header: 'カテゴリ',
-      align: 'center',
-      headerAlign: 'center',
-      className: calendarStyles.tableCellCategory,
-      headerClassName: calendarStyles.tableHeaderCategory,
-      render: (event) => (
-        <ScheduleCategoryBadge
-          category={event.category}
-          showLabel={false}
-          className={listStyles.categoryBadge}
-          iconClassName={listStyles.categoryIcon}
-        />
-      )
     }
   ];
 
@@ -198,7 +159,7 @@ export function ScheduleList({ schedules, categoryFilter, onEventClick }: Schedu
       onRowClick={onEventClick}
       emptyMessage="該当する予定がありません"
       getRowKey={(event, index) => `${event.id}-${index}`}
-      gridTemplateColumns="clamp(96px, 18vw, 220px) minmax(0, 1fr) clamp(48px, 7vw, 92px)"
+      gridTemplateColumns="clamp(130px, 34vw, 240px) minmax(0, 1fr)"
     />
   );
 }

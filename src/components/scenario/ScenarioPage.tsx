@@ -1,6 +1,7 @@
 import { useMemo, type KeyboardEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BookOpenText, CalendarCheck2, CalendarClock, ShieldCheck } from 'lucide-react';
+import type { ReactNode } from 'react';
 import type { GMScenario, PassedScenario } from 'types/database';
 import { PageHero } from '../common/PageHero';
 import { TabBar, type TabItem } from '../common/TabBar';
@@ -67,11 +68,16 @@ function toggleWithKeyboard(event: KeyboardEvent<HTMLDivElement>, action: () => 
   }
 }
 
-function formatDateWithWeekday(date?: string | null): string {
+function formatDateWithWeekday(date?: string | null): ReactNode {
   if (!date) return '未定';
   const dateValue = new Date(`${date}T00:00:00`);
   const weekday = new Intl.DateTimeFormat('ja-JP', { weekday: 'short' }).format(dateValue);
-  return `${date}（${weekday}）`;
+
+  return (
+    <span className={listStyles.dateLabel}>
+      {date}（{weekday}）
+    </span>
+  );
 }
 
 function formatScenarioTitle(title?: string | null): string {
@@ -189,6 +195,7 @@ export function ScenarioPage() {
     .sort((a, b) => a.title.localeCompare(b.title, 'ja'));
 
   const visibleCards = activeTab === 'planned' ? plannedCards : passedCards;
+  const isPassedTab = activeTab === 'passed';
   const isLoading = loading.passedScenarios || loading.gmScenarios;
 
   const openScenarioDetail = (scenario: PassedScenario) => {
@@ -199,43 +206,51 @@ export function ScenarioPage() {
 
   const scenarioColumns: ColumnDef<PassedScenario>[] = [
     {
-      key: 'date',
-      header: '日程',
-      align: 'left',
-      headerAlign: 'left',
-      className: calendarStyles.tableCellDate,
-      headerClassName: calendarStyles.tableHeaderDate,
-      render: (scenario) => formatDateWithWeekday(scenario.date),
+      key: 'serial',
+      header: 'No.',
+      align: 'center',
+      headerAlign: 'center',
+      className: calendarStyles.tableCellTime,
+      headerClassName: calendarStyles.tableHeaderTime,
+      divider: true,
+      render: (_scenario: PassedScenario, index: number) => (
+        <span className={styles.serialNumber}>
+          {isPassedTab ? String(visibleCards.length - index) : String(index + 1)}
+        </span>
+      ),
     },
     {
       key: 'title',
       header: 'タイトル',
       align: 'left',
-      headerAlign: 'left',
+      headerAlign: 'center',
       className: calendarStyles.tableCellTitle,
-      headerClassName: `${calendarStyles.tableHeaderTitle} ${listStyles.headerTitleOffset}`,
+      headerClassName: calendarStyles.tableHeaderTitle,
+      divider: true,
       render: (scenario) => (
         <span className={listStyles.titleWithIcon}>
-          <BookOpenText className={listStyles.titleIcon} aria-hidden="true" />
+          {isPassedTab ? (
+            <ScenarioCategoryBadge
+              category={scenario.type}
+              showLabel={false}
+              className={listStyles.categoryBadge}
+              iconClassName={listStyles.categoryIcon}
+            />
+          ) : (
+            <BookOpenText className={listStyles.titleIcon} aria-hidden="true" />
+          )}
           <span className={listStyles.titleText}>{formatScenarioTitle(scenario.title)}</span>
         </span>
       ),
     },
     {
-      key: 'category',
-      header: 'カテゴリ',
+      key: 'date',
+      header: isPassedTab ? '通過日' : '通過予定日',
       align: 'center',
       headerAlign: 'center',
-      className: calendarStyles.tableCellCategory,
-      headerClassName: calendarStyles.tableHeaderCategory,
-      render: (scenario) => (
-        <ScenarioCategoryBadge
-          category={scenario.type}
-          showLabel={false}
-          className={listStyles.categoryBadge}
-          iconClassName={listStyles.categoryIcon}
-        />
-      ),
+      className: calendarStyles.tableCellDate,
+      headerClassName: calendarStyles.tableHeaderDate,
+      render: (scenario) => formatDateWithWeekday(scenario.date),
     },
   ];
 
@@ -295,7 +310,7 @@ export function ScenarioPage() {
             onRowClick={openScenarioDetail}
             emptyMessage={activeTab === 'planned' ? '通過予定シナリオはまだありません。' : '通過済みシナリオはまだありません。'}
             getRowKey={(scenario) => scenario.id}
-            gridTemplateColumns="clamp(96px, 18vw, 220px) minmax(0, 1fr) clamp(48px, 7vw, 92px)"
+            gridTemplateColumns="clamp(48px, 10vw, 78px) minmax(0, 1fr) clamp(98px, 30vw, 200px)"
           />
         )}
       </div>
