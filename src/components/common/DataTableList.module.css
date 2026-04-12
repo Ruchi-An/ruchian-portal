@@ -46,7 +46,7 @@
 .rows {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 3px;
 }
 
 .row {
@@ -55,8 +55,8 @@
   align-items: center;
   padding-top: clamp(8px, 1.5vw, 12px);
   padding-bottom: clamp(8px, 1.5vw, 12px);
-  padding-right: clamp(10px, 1.5vw, 24px);
-  padding-left: clamp(10px, 1.5vw, 24px);
+  padding-right: clamp(10px, 1.5vw, 20px);
+  padding-left: clamp(10px, 1.5vw, 20px);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(155, 215, 255, 0.4));
   border: 1px solid rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(10px);
@@ -103,8 +103,6 @@
 /* 列区切り線（No.・タイトル列などの右端に適用） */
 .columnDivider {
   border-right: 1px solid rgba(150, 200, 255, 0.35);
-  padding-right: clamp(6px, 1.5vw, 14px);
-  margin-right: clamp(4px, 1vw, 10px);
 }
 
 .dateLabel {
@@ -169,7 +167,7 @@
   .header,
   .row {
     gap: 10px;
-    padding-right: 12px;
-    padding-left: 12px;
+    padding-right: 5px;
+    padding-left: 5px;
   }
 }
