@@ -726,6 +726,7 @@
   .event-afternoon,
   .event-evening,
   .event-late-night,
+  .event-real,
   .event-undefined {
     border-width: 0.5px;
     border-left-width: 4px;
