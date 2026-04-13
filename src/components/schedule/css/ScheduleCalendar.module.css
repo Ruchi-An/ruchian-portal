@@ -1,3 +1,8 @@
+/* 凡例のリアル予定色をカードと一致 */
+.legendDot.event-real {
+  background: linear-gradient(135deg, rgba(245,180,235,0.14), rgba(245,180,235,0.09));
+  border: 2px solid rgba(245,180,235,0.22);
+}
 /* ================================================
    Schedule 共通スタイル定義
    ================================================
@@ -539,7 +544,7 @@
 
 /* リアル予定 */
 .event-real {
-  --event-band-rgb: 235, 150, 255;
+  --event-band-rgb: 245, 180, 235;
 }
 
 /* 未定 */
@@ -557,6 +562,16 @@
   border: 2px solid rgb(var(--event-band-rgb));
   border-left: 8px solid rgb(var(--event-band-rgb));
   border-right: 8px solid rgb(var(--event-band-rgb));
+}
+
+.eventReal {
+  --event-band-rgb: 245, 180, 235;
+  background: linear-gradient(135deg, rgba(var(--event-band-rgb), 0.14), rgba(var(--event-band-rgb), 0.09));
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  border: 2px solid rgba(var(--event-band-rgb), 0.22);
 }
 
 /* ====================================

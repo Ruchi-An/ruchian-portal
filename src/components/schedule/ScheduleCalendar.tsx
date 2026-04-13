@@ -185,38 +185,7 @@ export function ScheduleCalendar({
   return (
     <>
       {/* 時間帯の凡例 */}
-      <div className={sharedStyles.legendContainer}>
-        <div className={sharedStyles.legend}>
-          <div className={sharedStyles.legendItem}>
-            <span className={`${sharedStyles.legendDot} ${sharedStyles.legendMorning}`} />
-            <span className={sharedStyles.legendText}>朝</span>
-          </div>
-        </div>
-        <div className={sharedStyles.legend}>
-          <div className={sharedStyles.legendItem}>
-            <span className={`${sharedStyles.legendDot} ${sharedStyles.legendAfternoon}`} />
-            <span className={sharedStyles.legendText}>昼</span>
-          </div>
-        </div>
-        <div className={sharedStyles.legend}>
-          <div className={sharedStyles.legendItem}>
-            <span className={`${sharedStyles.legendDot} ${sharedStyles.legendEvening}`} />
-            <span className={sharedStyles.legendText}>夜</span>
-          </div>
-        </div>
-        <div className={sharedStyles.legend}>
-          <div className={sharedStyles.legendItem}>
-            <span className={`${sharedStyles.legendDot} ${sharedStyles.legendLateNight}`} />
-            <span className={sharedStyles.legendText}>深夜</span>
-          </div>
-        </div>
-        <div className={sharedStyles.legend}>
-          <div className={sharedStyles.legendItem}>
-            <span className={`${sharedStyles.legendDot} ${sharedStyles.legendUndefined}`} />
-            <span className={sharedStyles.legendText}>時間未定</span>
-          </div>
-        </div>
-      </div>
+
 
       {/* 曜日ヘッダー */}
       <div className={sharedStyles.weekRow}>
@@ -284,13 +253,26 @@ export function ScheduleCalendar({
                   {[...cell.events]
                     .sort((a, b) => getStartMinutes(a.startTime) - getStartMinutes(b.startTime)) // 時刻順にソート
                     .map((event) => {
-                    const timeCategory = getTimeCategory(event.startTime); // 時間帯カテゴリ
+                    const timeCategory = event.contentType === 'real' ? 'real' : getTimeCategory(event.startTime); // realは常にピンク系
                     const startLabel = event.startTime || "未定";
                     const eventIcon = getEventIcon(event);
                     const shortTitle = event.label?.trim() || event.title || "-";
                     const CategoryIcon = getCategoryIcon(event);
                     const isIconTimeOnly = Boolean(CategoryIcon);
 
+                    if (event.contentType === 'real') {
+                      return (
+                        <li
+                          key={`${event.id}-${event.title}`}
+                          className={`${sharedStyles.eventChip} ${sharedStyles['event-real']}`}
+                          style={{ cursor: 'default' }}
+                        >
+                          <div className={sharedStyles.eventText}>
+                            <span className={sharedStyles.eventTitleRow} title={event.label || '-'}>{event.label || '-'}</span>
+                          </div>
+                        </li>
+                      );
+                    }
                     return (
                       <li
                         key={`${event.id}-${event.title}`}
