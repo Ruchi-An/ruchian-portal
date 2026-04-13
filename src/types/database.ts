@@ -162,6 +162,12 @@ function getScenarioCategory(genre?: string | null, gameSystem?: string | null):
   return '📙';
 }
 
+function getScenarioDisplayTitle(honmyo?: string | null, title?: string | null): string {
+  const preferred = honmyo?.trim();
+  if (preferred) return preferred;
+  return title?.trim() || 'タイトル未設定';
+}
+
 export function transformScheduleDataRow(row: ScheduleDataRow): ScheduleData {
   const title = row.memo?.trim() || 'タイトル未設定';
   const status: ScheduleStatus = row.status ?? (row.date ? 'planned' : 'pending');
@@ -230,11 +236,12 @@ export function toPassedScenario(schedule: ScheduleData, scenario: ScenarioInfo)
   const gmst = schedule.gmstName
     ? schedule.gmstName.split(/[,\u3001\uFF0C/／\n]+/).map((v) => v.trim()).filter(Boolean)
     : [];
+  const displayTitle = getScenarioDisplayTitle(scenario.honmyo, scenario.title);
 
   return {
     id: `${schedule.id}:${scenario.id}`,
     scheduleId: schedule.id,
-    title: scenario.title,
+    title: displayTitle,
     date: schedule.date,
     status: schedule.status,
     role: schedule.role,
@@ -254,9 +261,10 @@ export function toPassedScenario(schedule: ScheduleData, scenario: ScenarioInfo)
 
 export function toGMScenario(info: ScenarioInfo): GMScenario {
   const category = getScenarioCategory(info.genre, info.gameSystem);
+  const displayTitle = getScenarioDisplayTitle(info.honmyo, info.title);
   return {
     id: info.id,
-    title: info.title,
+    title: displayTitle,
     type: category,
     category,
     genre: info.genre ?? undefined,

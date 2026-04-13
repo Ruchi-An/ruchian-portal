@@ -1,6 +1,6 @@
 import { useMemo, type KeyboardEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BookOpenText, CalendarCheck2, CalendarClock, ShieldCheck } from 'lucide-react';
+import { CalendarCheck2, CalendarClock, ShieldCheck } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { GMScenario, PassedScenario } from 'types/database';
 import { PageHero } from '../common/PageHero';
@@ -229,16 +229,12 @@ export function ScenarioPage() {
       divider: true,
       render: (scenario) => (
         <span className={listStyles.titleWithIcon}>
-          {isPassedTab ? (
-            <ScenarioCategoryBadge
-              category={scenario.type}
-              showLabel={false}
-              className={listStyles.categoryBadge}
-              iconClassName={listStyles.categoryIcon}
-            />
-          ) : (
-            <BookOpenText className={listStyles.titleIcon} aria-hidden="true" />
-          )}
+          <ScenarioCategoryBadge
+            category={scenario.type}
+            showLabel={false}
+            className={listStyles.categoryBadge}
+            iconClassName={listStyles.categoryIcon}
+          />
           <span className={listStyles.titleText}>{formatScenarioTitle(scenario.title)}</span>
         </span>
       ),

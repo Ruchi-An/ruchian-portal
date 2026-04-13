@@ -264,7 +264,6 @@ async function resolveImageValue(
     return trimmed;
   }
 
-  console.log(`🖼️  ${fieldName} uploaded: ${fileName} -> ${storagePath}`);
   return publicUrl;
 }
 
@@ -315,7 +314,6 @@ async function deleteMissingByIds(table: string, ids: string[]): Promise<string[
   if (deleteTargets.length > 0) {
     const { error: deleteError } = await supabase.from(table).delete().in('id', deleteTargets);
     if (deleteError) throw deleteError;
-    console.log(`🗑️  Deleted ${deleteTargets.length} items from ${table}`);
   }
 
   return deleteTargets;
@@ -352,7 +350,6 @@ async function deleteEndcardAssetsByEventIds(eventIds: string[]) {
       continue;
     }
 
-    console.log(`🧹 removed ${fileNames.length} endcard file(s) for event ${eventId}`);
   }
 }
 
@@ -432,7 +429,8 @@ async function syncContents(): Promise<ContentCache> {
   await deleteMissingByIds('game_info', syncedGameIds);
   await deleteMissingByIds('scenario_info', syncedScenarioIds);
 
-  console.log(`✅ Synced ${syncedGameIds.length} games, ${syncedScenarioIds.length} scenarios`);
+  console.log(`Games: ${syncedGameIds.length}件同期`);
+  console.log(`Scenarios: ${syncedScenarioIds.length}件同期`);
   return contentCache;
 }
 
@@ -463,7 +461,6 @@ async function syncEvents(contentCache: ContentCache) {
 
       const formattedStartTime = formatStartTime(event.start_time);
       const resolvedEndcardImage = await resolveEndcardImageValue(event.endcard_image ?? event.endcard, id, filePath);
-      console.log(`📝 [${fileName}] start_time: ${JSON.stringify(event.start_time)} -> ${JSON.stringify(formattedStartTime)}`);
 
       const { error } = await supabase.from('schedules').upsert(
         {
@@ -520,7 +517,7 @@ async function syncEvents(contentCache: ContentCache) {
 
   await deleteMissingByIds('scenario_sessions', scenarioSessionIds);
 
-  console.log(`✅ Synced ${syncedScheduleIds.length} events (${scenarioSessionIds.length} scenarios)`);
+  console.log(`Events: ${syncedScheduleIds.length}件同期（シナリオ紐付け${scenarioSessionIds.length}件）`);
 }
 
 async function syncDays() {
@@ -562,20 +559,18 @@ async function syncDays() {
 
   await deleteMissingByIds('days_status', syncedIds);
 
-  console.log(`✅ Synced ${syncedIds.length} days`);
+  console.log(`Days: ${syncedIds.length}件同期`);
 }
 
 async function main() {
   if (!VAULT_PATH) throw new Error('VAULT_PATH is required');
   
-  console.log('🔄 Starting sync...');
-  console.log(`📂 Vault: ${VAULT_PATH}`);
   
   const contentCache = await syncContents();
   await syncEvents(contentCache);
   await syncDays();
   
-  console.log('✅ sync complete');
+  console.log('✅ 同期完了');
 }
 
 main().catch((error) => {

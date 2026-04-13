@@ -124,24 +124,28 @@ export function GMScenarioDetailPage() {
                   <span className={styles.value}>{scenario.creator || '-'}</span>
                 </div>
                 <div className={styles.infoItem}>
-                  <span className={styles.label}>PL人数：</span>
-                  <span className={styles.value}>{scenario.plPlayers || '-'}</span>
-                </div>
-                <div className={styles.infoItem}>
-                  <span className={styles.label}>所要時間：</span>
-                  <span className={styles.value}>{scenario.playTime || '-'}</span>
+                  <span className={styles.label}>システム：</span>
+                  <span className={styles.value}>{scenario.gameSystem || '-'}</span>
                 </div>
               </div>
               
               {/* 右カラム */}
               <div className={styles.column}>
                 <div className={styles.infoItem}>
-                  <span className={styles.label}>GM回数：</span>
-                  <span className={styles.value}>{scenario.gmPlayCount !== undefined ? `${scenario.gmPlayCount}回` : '-'}</span>
+                  <span className={styles.label}>所要時間：</span>
+                  <span className={styles.value}>{scenario.playTime || '-'}</span>
                 </div>
                 <div className={styles.infoItem}>
-                  <span className={styles.label}>配信：</span>
+                  <span className={styles.label}>PL人数：</span>
+                  <span className={styles.value}>{scenario.plPlayers || '-'}</span>
+                </div>
+                <div className={styles.infoItem}>
+                  <span className={styles.label}>配信可否：</span>
                   <span className={styles.value}>{scenario.streamOkng === true ? '可' : scenario.streamOkng === false ? '否' : '-'}</span>
+                </div>
+                <div className={styles.infoItem}>
+                  <span className={styles.label}>GM回数：</span>
+                  <span className={styles.value}>{scenario.gmPlayCount !== undefined ? `${scenario.gmPlayCount}回` : '-'}</span>
                 </div>
               </div>
             </div>
