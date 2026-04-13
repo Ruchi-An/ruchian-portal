@@ -260,34 +260,25 @@ export function ScheduleCalendar({
                     const CategoryIcon = getCategoryIcon(event);
                     const isIconTimeOnly = Boolean(CategoryIcon);
 
-                    if (event.contentType === 'real') {
-                      return (
-                        <li
-                          key={`${event.id}-${event.title}`}
-                          className={`${sharedStyles.eventChip} ${sharedStyles['event-real']}`}
-                          style={{ cursor: 'default' }}
-                        >
-                          <div className={sharedStyles.eventText}>
-                            <span className={sharedStyles.eventTitleRow} title={event.label || '-'}>{event.label || '-'}</span>
-                          </div>
-                        </li>
-                      );
-                    }
+                    const isReal = event.contentType === 'real';
+                    const displayLabel = isReal ? (event.label || '-') : shortTitle;
+                    
                     return (
                       <li
                         key={`${event.id}-${event.title}`}
                         className={`${sharedStyles.eventChip} ${sharedStyles[`event-${timeCategory}`]}`}
-                        onClick={(e) => {
-                          e.stopPropagation(); // セルのクリックイベントに伝播させない
+                        onClick={isReal ? undefined : (e) => {
+                          e.stopPropagation();
                           onEventClick(event);
                         }}
-                        role="button"
-                        tabIndex={0}
-                        onKeyPress={(e) => {
+                        role={isReal ? undefined : 'button'}
+                        tabIndex={isReal ? -1 : 0}
+                        onKeyPress={isReal ? undefined : (e) => {
                           if (e.key === 'Enter' || e.key === ' ') {
                             onEventClick(event);
                           }
                         }}
+                        style={isReal ? { cursor: 'default' } : undefined}
                       >
                         <div className={sharedStyles.eventText}>
                           {isIconTimeOnly ? (
@@ -295,13 +286,13 @@ export function ScheduleCalendar({
                               <span className={sharedStyles.eventIconLine} aria-hidden="true">
                                 {CategoryIcon && <CategoryIcon className={sharedStyles.eventCategoryIcon} />}
                               </span>
-                              <span className={sharedStyles.eventCompactTime}>{startLabel}</span>
+                              {!isReal && <span className={sharedStyles.eventCompactTime}>{startLabel}</span>}
                             </span>
                           ) : (
                             <>
                               <span className={sharedStyles.eventIconLine} aria-hidden="true">{eventIcon}</span>
-                              <span className={sharedStyles.eventTitleRow} title={shortTitle}>{shortTitle}</span>
-                              <span className={sharedStyles.eventTime}>（{startLabel}）</span>
+                              <span className={sharedStyles.eventTitleRow} title={displayLabel}>{displayLabel}</span>
+                              {!isReal && <span className={sharedStyles.eventTime}>（{startLabel}）</span>}
                             </>
                           )}
                         </div>
