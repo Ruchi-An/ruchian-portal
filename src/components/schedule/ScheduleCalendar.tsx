@@ -10,7 +10,7 @@
 
 import type { ScheduleData } from "types/database";
 import Holidays from "date-holidays";
-import { BedSingle, MonitorOff, Pin, Gamepad2, BookOpenText, Globe, type LucideIcon } from "lucide-react";
+import { Gamepad2, BookOpenText, Globe, type LucideIcon } from "lucide-react";
 import sharedStyles from "./css/ScheduleCalendar.module.css";
 
 // ==================== 型定義 ====================
@@ -28,7 +28,7 @@ type CalendarCell = {
   weekday?: number; // 曜日（0=日曜, 6=土曜）
   isWeekend?: boolean; // 週末かどうか
   isHoliday?: boolean; // 祝日かどうか
-  badgeTypes?: Array<'stream-off' | 'work-off' | 'tentative'>; // バッジタイプ
+  badgeTypes?: Array<'stream-off'>; // セル装飾タイプ
 };
 
 // ==================== 定数 ====================
@@ -100,8 +100,6 @@ interface ScheduleCalendarProps {
   eventsByDate: Record<string, Event[]>; // 日付ごとのイベント
   onEventClick: (event: Event) => void; // イベントクリック時のコールバック
   streamOffDays?: Set<string>; // 配信休みの日付セット
-  workOffDays?: Set<string>; // 仕事休みの日付セット
-  tentativeDays?: Set<string>; // 予定未定の日付セット
   onCellClick?: (dateKey: string) => void; // セルクリック時のコールバック（管理画面用）
   onCellRightClick?: (dateKey: string, e: React.MouseEvent) => void; // セル右クリック時のコールバック（管理画面用）
   isClickable?: boolean; // セルをクリック可能にするか（管理画面用）
@@ -120,8 +118,6 @@ export function ScheduleCalendar({
   eventsByDate, 
   onEventClick,
   streamOffDays = new Set(),
-  workOffDays = new Set(),
-  tentativeDays = new Set(),
   onCellClick,
   onCellRightClick,
   isClickable = false,
@@ -157,10 +153,8 @@ export function ScheduleCalendar({
     const isHoliday = Boolean(holidays.isHoliday(dateObj));
     
     // バッジ情報を配列化
-    const badgeTypes: Array<'stream-off' | 'work-off' | 'tentative'> = [];
+    const badgeTypes: Array<'stream-off'> = [];
     if (streamOffDays.has(dateKey)) badgeTypes.push('stream-off');
-    if (workOffDays.has(dateKey)) badgeTypes.push('work-off');
-    if (tentativeDays.has(dateKey)) badgeTypes.push('tentative');
     
     return {
       key: dateKey,
@@ -174,13 +168,6 @@ export function ScheduleCalendar({
       badgeTypes,
     };
   });
-
-  // バッジ情報（アイコンとラベル）
-  const badgeInfo: Record<'stream-off' | 'work-off' | 'tentative', { icon: LucideIcon; label: string }> = {
-    'stream-off': { icon: MonitorOff, label: '配信休み' },
-    'work-off': { icon: BedSingle, label: '仕事休み' },
-    'tentative': { icon: Pin, label: '予定入るかも' },
-  };
 
   return (
     <>
@@ -213,7 +200,7 @@ export function ScheduleCalendar({
               title={isClickable ? "右クリックでバッジを追加/削除" : undefined}
               style={isClickable && !cell.isEmpty ? { cursor: 'pointer' } : undefined}
             >
-              {/* 日付とバッジの行 */}
+              {/* 日付の行 */}
               <div className={sharedStyles.dateRow}>
                 {(() => {
                   // 日付の色を曜日や祝日によって変更
@@ -227,24 +214,6 @@ export function ScheduleCalendar({
                   }
                   return <span className={dateClasses.join(' ')}>{cell.label}</span>;
                 })()}
-
-                {/* バッジ表示 */}
-                {cell.badgeTypes && cell.badgeTypes.length > 0 && (
-                  <div className={sharedStyles.badgeContainer}>
-                    {cell.badgeTypes.map((badgeType) => (
-                      <span
-                        key={badgeType}
-                        className={`${sharedStyles.badgeMarker} ${sharedStyles[`badge-${badgeType}`]}`}
-                        title={badgeInfo[badgeType].label}
-                      >
-                        {(() => {
-                          const Icon = badgeInfo[badgeType].icon;
-                          return <Icon className={sharedStyles.badgeIcon} aria-hidden="true" />;
-                        })()}
-                      </span>
-                    ))}
-                  </div>
-                )}
               </div>
 
               {/* イベント一覧 */}

@@ -309,6 +309,16 @@
   border-style: dashed;
 }
 
+.streamOffDay {
+  background-image:
+    repeating-linear-gradient(
+      135deg,
+      rgba(160, 205, 255, 0.22) 0 8px,
+      rgba(30, 70, 130, 0.05) 8px 16px
+    ),
+    linear-gradient(rgba(0, 10, 60, 0.7), rgba(0, 10, 60, 0.7));
+}
+
 /* 日付表示 */
 .dateRow {
   display: flex;

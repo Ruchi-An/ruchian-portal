@@ -13,14 +13,14 @@ const supabase = createClient(
 );
 
 const VAULT_PATH = process.env.VAULT_PATH!;
-const ENDCARD_BUCKET = process.env.ENDCARD_BUCKET ?? 'endcards';
-const ENDCARD_ASSET_DIR = process.env.ENDCARD_ASSET_DIR;
+const IMAGE_BUCKET = process.env.IMAGE_BUCKET ?? process.env.ENDCARD_BUCKET ?? 'images';
+const IMAGE_ASSET_DIR = process.env.IMAGE_ASSET_DIR ?? process.env.ENDCARD_ASSET_DIR;
 const CONTENT_NOTES_DIR = path.join(VAULT_PATH, '01_Contents');
 const EVENT_NOTES_DIR = path.join(VAULT_PATH, '02_Events');
 const DAY_NOTES_DIR = path.join(VAULT_PATH, '03_Days');
 
 let vaultFileIndex: Map<string, string[]> | null = null;
-let endcardBucketReady = false;
+let imageBucketReady = false;
 
 // UUID v5 namespace for generating deterministic IDs from filenames
 const NAMESPACE_UUID = 'c3a6d8e0-8b4a-4f3e-9d2c-1a5b7c9e0f1a';
@@ -55,11 +55,10 @@ type EventFrontmatter = {
   members?: string[];
   pc_name?: string;
   gmst_name?: string;
-  server?: string;
   is_stream?: boolean;
   stream_url?: string;
   endcard_image?: string;
-  endcard?: string;
+  thumbnail_image?: string;
   memo?: string;
 };
 
@@ -86,9 +85,7 @@ type DayFrontmatter = {
   id?: string;
   fileClass?: string;
   date: string;
-  work_off?: boolean;
   stream_off?: boolean;
-  will?: 'free' | 'tentative' | 'blocked';
   memo?: string;
 };
 
@@ -194,8 +191,8 @@ function resolveLocalAssetPath(assetRef: string, noteFilePath: string): string |
   const vaultCandidate = path.resolve(VAULT_PATH, normalized);
   if (fs.existsSync(vaultCandidate)) return vaultCandidate;
 
-  if (ENDCARD_ASSET_DIR) {
-    const assetDirCandidate = path.resolve(ENDCARD_ASSET_DIR, normalized);
+  if (IMAGE_ASSET_DIR) {
+    const assetDirCandidate = path.resolve(IMAGE_ASSET_DIR, normalized);
     if (fs.existsSync(assetDirCandidate)) return assetDirCandidate;
   }
 
@@ -211,7 +208,7 @@ async function resolveImageValue(
   imageRaw: string | undefined,
   noteFilePath: string,
   storagePathPrefix: string,
-  fieldName: 'endcard_image' | 'trailer_image',
+  fieldName: 'endcard_image' | 'trailer_image' | 'thumbnail_image',
 ): Promise<string | null> {
   if (!imageRaw) return null;
 
@@ -241,14 +238,14 @@ async function resolveImageValue(
   const storagePath = `${storagePathPrefix}/${safeStorageFileName}`;
   const contentType = detectContentType(localPath);
 
-  const bucketReady = await ensureEndcardBucket();
+  const bucketReady = await ensureImageBucket();
   if (!bucketReady) {
-    console.error(`❌ ${fieldName} upload skipped: bucket '${ENDCARD_BUCKET}' is unavailable`);
+    console.error(`❌ ${fieldName} upload skipped: bucket '${IMAGE_BUCKET}' is unavailable`);
     return trimmed;
   }
 
   const { error: uploadError } = await supabase.storage
-    .from(ENDCARD_BUCKET)
+    .from(IMAGE_BUCKET)
     .upload(storagePath, fileBuffer, { upsert: true, contentType });
 
   if (uploadError) {
@@ -256,7 +253,7 @@ async function resolveImageValue(
     return trimmed;
   }
 
-  const { data } = supabase.storage.from(ENDCARD_BUCKET).getPublicUrl(storagePath);
+  const { data } = supabase.storage.from(IMAGE_BUCKET).getPublicUrl(storagePath);
   const publicUrl = data.publicUrl;
 
   if (!publicUrl) {
@@ -268,39 +265,43 @@ async function resolveImageValue(
 }
 
 async function resolveEndcardImageValue(endcardImageRaw: string | undefined, eventId: string, noteFilePath: string): Promise<string | null> {
-  return resolveImageValue(endcardImageRaw, noteFilePath, `events/${eventId}`, 'endcard_image');
+  return resolveImageValue(endcardImageRaw, noteFilePath, `endcards/${eventId}`, 'endcard_image');
 }
 
 async function resolveTrailerImageValue(trailerImageRaw: string | undefined, scenarioId: string, noteFilePath: string): Promise<string | null> {
-  return resolveImageValue(trailerImageRaw, noteFilePath, `scenarios/${scenarioId}`, 'trailer_image');
+  return resolveImageValue(trailerImageRaw, noteFilePath, `trailers/${scenarioId}`, 'trailer_image');
 }
 
-async function ensureEndcardBucket(): Promise<boolean> {
-  if (endcardBucketReady) return true;
+async function resolveThumbnailImageValue(thumbnailImageRaw: string | undefined, eventId: string, noteFilePath: string): Promise<string | null> {
+  return resolveImageValue(thumbnailImageRaw, noteFilePath, `thumbnails/${eventId}`, 'thumbnail_image');
+}
 
-  const { data, error } = await supabase.storage.getBucket(ENDCARD_BUCKET);
+async function ensureImageBucket(): Promise<boolean> {
+  if (imageBucketReady) return true;
+
+  const { data, error } = await supabase.storage.getBucket(IMAGE_BUCKET);
   if (!error && data) {
-    endcardBucketReady = true;
+    imageBucketReady = true;
     return true;
   }
 
   if (error && !/not found|does not exist/i.test(error.message)) {
-    console.error(`❌ failed to check bucket '${ENDCARD_BUCKET}': ${error.message}`);
+    console.error(`❌ failed to check bucket '${IMAGE_BUCKET}': ${error.message}`);
     return false;
   }
 
-  const { error: createError } = await supabase.storage.createBucket(ENDCARD_BUCKET, {
+  const { error: createError } = await supabase.storage.createBucket(IMAGE_BUCKET, {
     public: true,
     allowedMimeTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/svg+xml', 'image/avif'],
   });
 
   if (createError) {
-    console.error(`❌ failed to create bucket '${ENDCARD_BUCKET}': ${createError.message}`);
+    console.error(`❌ failed to create bucket '${IMAGE_BUCKET}': ${createError.message}`);
     return false;
   }
 
-  endcardBucketReady = true;
-  console.log(`🪣 created missing bucket: ${ENDCARD_BUCKET}`);
+  imageBucketReady = true;
+  console.log(`🪣 created missing bucket: ${IMAGE_BUCKET}`);
   return true;
 }
 
@@ -322,27 +323,27 @@ async function deleteMissingByIds(table: string, ids: string[]): Promise<string[
 async function deleteEndcardAssetsByEventIds(eventIds: string[]) {
   if (eventIds.length === 0) return;
 
-  const bucketReady = await ensureEndcardBucket();
+  const bucketReady = await ensureImageBucket();
   if (!bucketReady) {
-    console.warn(`⚠️  skip endcard cleanup: bucket '${ENDCARD_BUCKET}' is unavailable`);
+    console.warn(`⚠️  skip endcard cleanup: bucket '${IMAGE_BUCKET}' is unavailable`);
     return;
   }
 
   for (const eventId of eventIds) {
     const { data: files, error: listError } = await supabase.storage
-      .from(ENDCARD_BUCKET)
-      .list(eventId, { limit: 1000, sortBy: { column: 'name', order: 'asc' } });
+      .from(IMAGE_BUCKET)
+      .list(`endcards/${eventId}`, { limit: 1000, sortBy: { column: 'name', order: 'asc' } });
 
     if (listError) {
       console.warn(`⚠️  failed to list endcards for ${eventId}: ${listError.message}`);
       continue;
     }
 
-    const fileNames = (files ?? []).filter((item) => item.name).map((item) => `${eventId}/${item.name}`);
+    const fileNames = (files ?? []).filter((item) => item.name).map((item) => `endcards/${eventId}/${item.name}`);
     if (fileNames.length === 0) continue;
 
     const { error: removeError } = await supabase.storage
-      .from(ENDCARD_BUCKET)
+      .from(IMAGE_BUCKET)
       .remove(fileNames);
 
     if (removeError) {
@@ -460,7 +461,8 @@ async function syncEvents(contentCache: ContentCache) {
       }
 
       const formattedStartTime = formatStartTime(event.start_time);
-      const resolvedEndcardImage = await resolveEndcardImageValue(event.endcard_image ?? event.endcard, id, filePath);
+      const resolvedEndcardImage = await resolveEndcardImageValue(event.endcard_image, id, filePath);
+      const resolvedThumbnailImage = await resolveThumbnailImageValue(event.thumbnail_image, id, filePath);
 
       const { error } = await supabase.from('schedules').upsert(
         {
@@ -475,10 +477,10 @@ async function syncEvents(contentCache: ContentCache) {
           members: event.members ?? [],
           pc_name: event.pc_name ?? null,
           gmst_name: event.gmst_name ?? null,
-          server: event.server ?? null,
           is_stream: event.is_stream ?? false,
           stream_url: event.stream_url ?? null,
           endcard_image: resolvedEndcardImage,
+          thumbnail_image: resolvedThumbnailImage,
           memo: event.memo ?? null,
         },
         { onConflict: 'id' },
@@ -542,9 +544,7 @@ async function syncDays() {
         {
           id,
           date: day.date,
-          work_off: day.work_off ?? false,
           stream_off: day.stream_off ?? false,
-          will: day.will ?? 'free',
           memo: day.memo ?? null,
         },
         { onConflict: 'id' },

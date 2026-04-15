@@ -88,7 +88,7 @@ export function useDataManager() {
           .order('date', { ascending: true, nullsFirst: false }),
         supabase
           .from('days_status')
-          .select('id, date, work_off, stream_off, will, memo')
+          .select('id, date, stream_off, memo')
           .order('date', { ascending: true }),
         supabase
           .from('game_info')
@@ -233,11 +233,9 @@ export function useDataManager() {
   const getBadgesForDate = useCallback(
     (date: string) => {
       const badge = data.badges.find((b) => b.date === date);
-      if (!badge) return { streamOff: false, workOff: false, tentative: false };
+      if (!badge) return { streamOff: false };
       return {
         streamOff: badge.streamOff ?? false,
-        workOff: badge.workOff ?? false,
-        tentative: badge.tentative ?? false,
       };
     },
     [data.badges],

@@ -81,7 +81,7 @@ function getTitleIcon(event: Event) {
 }
 
 function formatTitle(event: Event): string {
-  const baseTitle = event.title?.trim() || event.label?.trim() || "-";
+  const baseTitle = event.honmyo?.trim() || event.title?.trim() || event.label?.trim() || "-";
   if (event.contentType === "scenario") return `『${baseTitle}』`;
   return baseTitle;
 }

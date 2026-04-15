@@ -19,8 +19,9 @@ supabase db push
 - `anon` キーを `SUPABASE_SERVICE_ROLE_KEY` に設定すると、スキーマ作成や同期書き込みが失敗します。
 
 ## 画像フィールド（Obsidian → Supabase Storage）
-- `scripts/sync.ts` は `endcard_image` / `trailer_image` が `![[image.png]]` / `[[image.png]]` / `image.png` の場合、ローカル画像を Supabase Storage にアップロードして公開URLを保存します。
-- `endcard_image` は `schedules.endcard_image` に、`trailer_image` は `scenario_info.trailer_image` に保存されます。
+- `scripts/sync.ts` は `endcard_image` / `thumbnail_image` / `trailer_image` が `![[image.png]]` / `[[image.png]]` / `image.png` の場合、ローカル画像を Supabase Storage にアップロードして公開URLを保存します。
+- `endcard_image` と `thumbnail_image` は `schedules` テーブル（`endcard_image` / `thumbnail_image`）に、`trailer_image` は `scenario_info.trailer_image` に保存されます。
+- Storage内の保存先は `endcards/{eventId}` / `thumbnails/{eventId}` / `trailers/{scenarioId}` です。
 - 既に `https://` から始まるURLが入っている場合はそのまま保存します。
 
 ### 必須/推奨設定
@@ -28,11 +29,12 @@ supabase db push
   - `VAULT_PATH=...` （Obsidian Vaultのルート）
   - `SUPABASE_URL=...`
   - `SUPABASE_SERVICE_ROLE_KEY=...`
-  - `ENDCARD_BUCKET=endcards`（未指定時は `endcards`）
-  - `ENDCARD_ASSET_DIR=...`（任意。添付画像フォルダを別管理している場合）
+  - `IMAGE_BUCKET=images`（推奨。未指定時は `images`）
+  - `IMAGE_ASSET_DIR=...`（任意。添付画像フォルダを別管理している場合）
+  - 互換: `ENDCARD_BUCKET` / `ENDCARD_ASSET_DIR` も引き続き読み込みます。
 
 ### Supabase側の準備
-- Storageに `ENDCARD_BUCKET` で指定したバケットを作成してください。
+- Storageに `IMAGE_BUCKET` で指定したバケットを作成してください。
 - 公開URL表示を使う場合、バケットを Public にしてください。
 
 ## よくあるエラー
@@ -42,7 +44,7 @@ supabase db push
 
 ## このマイグレーションで作成されるもの
 - テーブル: `game_info`, `scenario_info`, `schedules`, `scenario_sessions`, `days_status`
-- Enum: `content_type`, `schedule_status`, `schedule_position`, `schedule_role`, `day_will`
+- Enum: `content_type`, `schedule_status`, `schedule_position`, `schedule_role`
 - 制約:
   - `scenario_sessions.schedule_id -> schedules.id` FK (CASCADE)
   - `schedules.status` と `date` の整合チェック

@@ -1,7 +1,5 @@
 export type ContentType = 'game' | 'scenario' | 'real';
 export type ScheduleStatus = 'pending' | 'planned' | 'done';
-export type DayWill = 'free' | 'tentative' | 'blocked';
-
 export type ScheduleDataRow = {
   id: string;
   content_type: ContentType;
@@ -16,10 +14,10 @@ export type ScheduleDataRow = {
   members?: string[] | null;
   pc_name?: string | null;
   gmst_name?: string | null;
-  server?: string | null;
   is_stream?: boolean | null;
   stream_url?: string | null;
   endcard_image?: string | null;
+  thumbnail_image?: string | null;
   memo?: string | null;
 };
 
@@ -37,10 +35,10 @@ export type ScheduleData = {
   members?: string[];
   pcName?: string | null;
   gmstName?: string | null;
-  server?: string | null;
   isStream?: boolean | null;
   streamUrl?: string | null;
   endcardImage?: string | null;
+  thumbnailImage?: string | null;
   memo?: string | null;
   title: string;
   honmyo?: string | null;
@@ -58,9 +56,7 @@ export type ScheduleData = {
 export type ScheduleBadgeRow = {
   id: string;
   date: string;
-  work_off?: boolean | null;
   stream_off?: boolean | null;
-  will?: DayWill | null;
   memo?: string | null;
 };
 
@@ -68,9 +64,6 @@ export type ScheduleBadge = {
   id: string;
   date: string;
   streamOff?: boolean | null;
-  workOff?: boolean | null;
-  tentative?: boolean | null;
-  will?: DayWill | null;
   memo?: string | null;
 };
 
@@ -185,10 +178,10 @@ export function transformScheduleDataRow(row: ScheduleDataRow): ScheduleData {
     members: row.members ?? [],
     pcName: row.pc_name,
     gmstName: row.gmst_name,
-    server: row.server,
     isStream: row.is_stream ?? false,
     streamUrl: row.stream_url,
     endcardImage: row.endcard_image,
+    thumbnailImage: row.thumbnail_image,
     memo: row.memo,
     title,
     honmyo: null,
@@ -200,14 +193,10 @@ export function transformScheduleDataRow(row: ScheduleDataRow): ScheduleData {
 }
 
 export function transformScheduleBadgeRow(row: ScheduleBadgeRow): ScheduleBadge {
-  const will = row.will ?? 'free';
   return {
     id: row.id,
     date: row.date,
     streamOff: row.stream_off,
-    workOff: row.work_off,
-    tentative: will === 'tentative',
-    will,
     memo: row.memo,
   };
 }

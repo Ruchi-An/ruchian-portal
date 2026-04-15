@@ -74,8 +74,6 @@ function nextMonth(displayDate: DisplayDate): DisplayDate {
 function getBadgeSets(badges: ScheduleBadge[]) {
   return {
     streamOffDays: new Set(badges.filter((badge) => badge.streamOff).map((badge) => badge.date)),
-    workOffDays: new Set(badges.filter((badge) => badge.workOff).map((badge) => badge.date)),
-    tentativeDays: new Set(badges.filter((badge) => badge.will === 'tentative').map((badge) => badge.date)),
   };
 }
 
@@ -86,6 +84,7 @@ function getScheduleGroups(schedules: Event[]) {
   const pastSchedules: Event[] = [];
 
   schedules.forEach((schedule) => {
+    if (schedule.contentType === 'real' || schedule.category === '🌏') return;
     if (!schedule.date) return;
 
     if (!eventsByDate[schedule.date]) {
@@ -182,7 +181,7 @@ export function SchedulePage() {
   const isNarrowScreen = useIsNarrowScreen();
 
   // バッジデータの整理
-  const { streamOffDays, workOffDays, tentativeDays } = getBadgeSets(badges);
+  const { streamOffDays } = getBadgeSets(badges);
   // スケジュールデータの整理
   const { eventsByDate, futureSchedules, pastSchedules } = getScheduleGroups(schedules);
 
@@ -281,8 +280,6 @@ export function SchedulePage() {
                   eventsByDate={eventsByDate}
                   onEventClick={handleEventClick}
                   streamOffDays={streamOffDays}
-                  workOffDays={workOffDays}
-                  tentativeDays={tentativeDays}
                 />
               </div>
             )}
