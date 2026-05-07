@@ -7,6 +7,9 @@ import { DataProvider } from './lib/DataContext.tsx';
 const SchedulePage = lazy(() =>
   import('./components/schedule/SchedulePage.tsx').then((module) => ({ default: module.SchedulePage })),
 );
+const ScheduleDetailPage = lazy(() =>
+  import('./components/schedule/ScheduleDetailPage.tsx').then((module) => ({ default: module.ScheduleDetailPage })),
+);
 const ScenarioPage = lazy(() =>
   import('./components/scenario/ScenarioPage.tsx').then((module) => ({ default: module.ScenarioPage })),
 );
@@ -15,6 +18,9 @@ const GMScenarioDetailPage = lazy(() =>
 );
 const ScenarioDetailPage = lazy(() =>
   import('./components/scenario/ScenarioDetailPage.tsx').then((module) => ({ default: module.ScenarioDetailPage })),
+);
+const PassedScenarioGridPage = lazy(() =>
+  import('./components/scenario/PassedScenarioGridPage.tsx').then((module) => ({ default: module.PassedScenarioGridPage })),
 );
 
 function RouteLoader() {
@@ -36,10 +42,26 @@ export default function App() {
           )}
         />
         <Route
+          path="/schedule/detail/:id"
+          element={(
+            <Suspense fallback={<RouteLoader />}>
+              <ScheduleDetailPage />
+            </Suspense>
+          )}
+        />
+        <Route
           path="/scenario"
           element={(
             <Suspense fallback={<RouteLoader />}>
               <ScenarioPage />
+            </Suspense>
+          )}
+        />
+        <Route
+          path="/scenario/passed-grid"
+          element={(
+            <Suspense fallback={<RouteLoader />}>
+              <PassedScenarioGridPage />
             </Suspense>
           )}
         />

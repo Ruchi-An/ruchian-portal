@@ -8,13 +8,13 @@
 // ================================================
 
 import { BookOpenText, CalendarDays, Clock3, Gamepad2, History, Shapes } from 'lucide-react';
-import { useState, type ChangeEvent } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import type { ChangeEvent } from 'react';
 import type { ScheduleBadge } from 'types/database';
 import { useData } from '../../lib/DataContext';
 import { useIsNarrowScreen } from '../../lib/useIsNarrowScreen';
 import { PageHero } from '../common/PageHero';
 import { TabBar, type TabItem } from '../common/TabBar';
-import { EventDetailModal } from './EventDetailModal';
 import { ScheduleCalendar, type Event } from './ScheduleCalendar';
 import { ScheduleList } from './ScheduleList';
 import calendarStyles from './css/ScheduleCalendar.module.css';
@@ -28,9 +28,9 @@ type ViewMode = 'calendar' | 'future' | 'past';
 type CategoryFilter = 'all' | '🎮' | '📚';
 
 const VIEW_MODE_TABS: TabItem[] = [
-  { key: 'past', label: 'リスト -過去-', shortLabel: '-過去-', icon: History },
-  { key: 'calendar', label: 'カレンダー', shortLabel: 'カレンダー', icon: CalendarDays },
-  { key: 'future', label: 'リスト -未来-', shortLabel: '-未来-', icon: Clock3 },
+  { key: 'past', label: 'りすと -過去-', shortLabel: '-過去-', icon: History },
+  { key: 'calendar', label: 'かれんだー', shortLabel: 'かれんだー', icon: CalendarDays },
+  { key: 'future', label: 'りすと -未来-', shortLabel: '-未来-', icon: Clock3 },
 ];
 
 const CATEGORY_TABS: TabItem[] = [
@@ -75,6 +75,12 @@ function getBadgeSets(badges: ScheduleBadge[]) {
   return {
     streamOffDays: new Set(badges.filter((badge) => badge.streamOff).map((badge) => badge.date)),
   };
+}
+
+function parseSearchInteger(value: string | null): number | null {
+  if (value === null) return null;
+  const parsed = Number.parseInt(value, 10);
+  return Number.isNaN(parsed) ? null : parsed;
 }
 
 function getScheduleGroups(schedules: Event[]) {
@@ -160,25 +166,53 @@ function ScheduleCalendarNavigation({
 // スケジュールページコンポーネント本体
 // ================================================
 export function SchedulePage() {
-  // 現在日時
   const now = new Date();
-  // 今日の日付キー（YYYY-MM-DD形式）
   const todayKey = formatDateKey(now);
-  // データコンテキストから取得
   const { schedules, loading, badges } = useData();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  // カレンダー表示中の年月
-  const [displayDate, setDisplayDate] = useState<DisplayDate>({ year: now.getFullYear(), month: now.getMonth() });
-  // モーダルで表示する選択中イベント
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  // モーダル表示状態
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  // 表示モード（カレンダー/未来リスト/過去リスト）
-  const [viewMode, setViewMode] = useState<ViewMode>('calendar');
-  // カテゴリフィルター（リスト表示時のみ使用）
-  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
-  // 画面幅判定
+  const params = new URLSearchParams(location.search);
+  const parsedYear = parseSearchInteger(params.get('year'));
+  const parsedMonth = parseSearchInteger(params.get('month'));
+  const viewModeParam = params.get('view');
+  const categoryParam = params.get('category');
+
+  const displayDate: DisplayDate = {
+    year: parsedYear !== null ? parsedYear : now.getFullYear(),
+    month: parsedMonth !== null && parsedMonth >= 0 && parsedMonth <= 11 ? parsedMonth : now.getMonth(),
+  };
+  const viewMode: ViewMode = viewModeParam === 'future' || viewModeParam === 'past' || viewModeParam === 'calendar'
+    ? viewModeParam
+    : 'calendar';
+  const categoryFilter: CategoryFilter = categoryParam === '🎮' || categoryParam === '📚' ? categoryParam : 'all';
   const isNarrowScreen = useIsNarrowScreen();
+
+  const updateScheduleSearch = (next: {
+    view?: ViewMode;
+    category?: CategoryFilter;
+    year?: number;
+    month?: number;
+  }) => {
+    const nextParams = new URLSearchParams(location.search);
+
+    const nextView = next.view ?? viewMode;
+    const nextCategory = next.category ?? categoryFilter;
+    const nextYear = next.year ?? displayDate.year;
+    const nextMonth = next.month ?? displayDate.month;
+
+    nextParams.set('view', nextView);
+    nextParams.set('year', String(nextYear));
+    nextParams.set('month', String(nextMonth));
+
+    if (nextCategory === 'all') {
+      nextParams.delete('category');
+    } else {
+      nextParams.set('category', nextCategory);
+    }
+
+    navigate(`/schedule?${nextParams.toString()}`);
+  };
 
   // バッジデータの整理
   const { streamOffDays } = getBadgeSets(badges);
@@ -190,26 +224,24 @@ export function SchedulePage() {
   const monthIndex = displayDate.month;
   const currentYear = now.getFullYear();
   const yearOptions = getYearOptions(currentYear);
-  const handlePrevMonth = () => setDisplayDate(prev => prevMonth(prev));
-  const handleNextMonth = () => setDisplayDate(prev => nextMonth(prev));
+  const handlePrevMonth = () => {
+    const nextDate = prevMonth(displayDate);
+    updateScheduleSearch({ year: nextDate.year, month: nextDate.month });
+  };
+  const handleNextMonth = () => {
+    const nextDate = nextMonth(displayDate);
+    updateScheduleSearch({ year: nextDate.year, month: nextDate.month });
+  };
   const handleYearChange = (event: ChangeEvent<HTMLSelectElement>) =>
-    setDisplayDate((prev) => changeYear(prev, parseInt(event.target.value, 10)));
+    updateScheduleSearch({ year: changeYear(displayDate, parseInt(event.target.value, 10)).year });
   const handleMonthChange = (event: ChangeEvent<HTMLSelectElement>) =>
-    setDisplayDate((prev) => changeMonth(prev, parseInt(event.target.value, 10)));
+    updateScheduleSearch({ month: changeMonth(displayDate, parseInt(event.target.value, 10)).month });
   const handleToday = () => {
-    setDisplayDate({ year: currentYear, month: now.getMonth() });
+    updateScheduleSearch({ year: currentYear, month: now.getMonth() });
   };
 
-  // イベントクリック時のモーダル表示処理
   const handleEventClick = (event: Event) => {
-    setSelectedEvent(event);
-    setIsModalOpen(true);
-  };
-
-  // モーダルを閉じる
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedEvent(null);
+    navigate(`/schedule/detail/${encodeURIComponent(event.id ?? '')}?${params.toString()}`);
   };
 
   // データ読み込み中フラグ
@@ -233,7 +265,7 @@ export function SchedulePage() {
           <TabBar
             tabs={VIEW_MODE_TABS}
             activeTab={viewMode}
-            onTabChange={(tabKey) => setViewMode(tabKey as ViewMode)}
+              onTabChange={(tabKey) => updateScheduleSearch({ view: tabKey as ViewMode })}
             isNarrowScreen={isNarrowScreen}
           />
 
@@ -244,7 +276,7 @@ export function SchedulePage() {
               spacing="compact"
               tabs={CATEGORY_TABS}
               activeTab={categoryFilter}
-              onTabChange={(tabKey) => setCategoryFilter(tabKey as CategoryFilter)}
+              onTabChange={(tabKey) => updateScheduleSearch({ category: tabKey as CategoryFilter })}
               isNarrowScreen={isNarrowScreen}
             />
           )}
@@ -306,9 +338,6 @@ export function SchedulePage() {
 
         </div>
       )}
-
-      {/* イベント詳細モーダル */}
-      <EventDetailModal event={selectedEvent} isOpen={isModalOpen && !!selectedEvent} onClose={handleCloseModal} />
     </main>
   );
 }

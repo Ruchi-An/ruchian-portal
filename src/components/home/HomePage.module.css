@@ -1,20 +1,291 @@
-/* ===== Weekly schedule hero ===== */
-.heroSection {
-  display: grid;
-  place-items: start center;
-  padding: max(80px, 10vh) 20px 32px;
+/* ===== HERO SECTION ===== */
+.hero {
   position: relative;
-  width: min(1280px, 100%);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+.heroInner {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(8px, 2.8vw, 42px);
+  padding: clamp(86px, 11vh, 144px) clamp(16px, 4vw, 64px) clamp(18px, 3vh, 34px);
+  max-width: 1280px;
   margin: 0 auto;
-}
-
-.heroImageWrap {
+  width: 100%;
   position: relative;
-  width: min(100%, 1100px);
-  margin: clamp(1px, 3vw, 64px) auto 0;
+  z-index: 1;
 }
 
-.topHeroImage {
+/* ===== テキスト側 ===== */
+.heroContent {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  position: relative;
+  align-self: center;
+  max-width: min(680px, 52vw);
+  margin-left: clamp(-34px, -2.2vw, -10px);
+  margin-bottom: 0;
+  transform: translateY(clamp(22px, 3vh, 38px));
+}
+
+/* テキストエリアの背後にもぼんやりした光 */
+.heroContent::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -15%;
+  width: 130%;
+  height: 140%;
+  background: radial-gradient(ellipse at 30% 40%,
+    rgba(100, 160, 255, 0.12) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.heroContent > * {
+  position: relative;
+  z-index: 1;
+}
+
+.heroTagline {
+  margin: 0 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(0.92rem, 1.28vw, 1.08rem);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(180, 220, 255, 0.96);
+  text-shadow:
+    0 0 18px rgba(150, 200, 255, 0.7),
+    0 2px 10px rgba(0, 0, 0, 0.42);
+}
+
+.heroTaglineStar {
+  color: rgba(255, 211, 77, 0.82);
+  text-shadow: 0 0 8px rgba(255, 211, 77, 0.55);
+  letter-spacing: 0;
+}
+
+.heroName {
+  margin: 0 0 6px;
+  font-size: clamp(4.0rem, 6.8vw, 6.8rem);
+  white-space: nowrap;
+  font-weight: 900;
+  font-family: 'Hiragino Maru Gothic ProN', 'M PLUS Rounded 1c', 'Arial Rounded MT Bold', sans-serif;
+  letter-spacing: -0.01em;
+  line-height: 1.03;
+  color: #ffffff;
+  text-shadow:
+    0 0 24px rgba(150, 200, 255, 0.58),
+    0 0 72px rgba(100, 160, 255, 0.28),
+    0 8px 28px rgba(0, 0, 0, 0.48);
+  background: linear-gradient(135deg, #ffffff 16%, #dff1ff 52%, #9fd2ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSub {
+  margin: 0 0 36px;
+  font-size: clamp(1rem, 1.34vw, 1.16rem);
+  font-weight: 700;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.94);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
+  max-width: 38ch;
+}
+
+/* ===== SNS ボタン ===== */
+.heroButtons {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 14px;
+}
+
+.heroBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.82rem 1.45rem;
+  border-radius: var(--radius-large);
+  font-size: clamp(0.88rem, 0.98vw, 0.98rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  white-space: nowrap;
+}
+
+.heroBtn:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.1);
+}
+
+.heroBtnIcon {
+  font-size: 1.05em;
+  line-height: 1;
+}
+
+.btnYoutube {
+  background: linear-gradient(135deg, #ff3b3b, #cc0000);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(255, 60, 60, 0.35);
+}
+
+.btnYoutube:hover {
+  color: #fff;
+  box-shadow: 0 6px 28px rgba(255, 60, 60, 0.55);
+}
+
+.btnX {
+  background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.10));
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.btnX:hover {
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(150, 200, 255, 0.3);
+}
+
+.btnWishlist {
+  background: linear-gradient(135deg, rgba(255, 180, 200, 0.25), rgba(255, 130, 170, 0.15));
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 150, 190, 0.4);
+  color: #ffb8d2;
+  box-shadow: 0 4px 16px rgba(255, 100, 150, 0.2);
+}
+
+.btnWishlist:hover {
+  color: #ffd0e4;
+  box-shadow: 0 6px 24px rgba(255, 100, 150, 0.4);
+}
+
+/* ===== キャラクター立ち絵 ===== */
+.heroCharWrap {
+  flex: 0 0 auto;
+  width: clamp(580px, 68vw, 1080px);
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  align-self: flex-end;
+  margin-left: clamp(-240px, -17vw, -96px);
+  margin-right: clamp(-200px, -14vw, -80px);
+  pointer-events: none;
+}
+
+.heroChar {
+  width: 100%;
+  height: auto;
+  max-height: min(126vh, 1240px);
+  object-fit: contain;
+  object-position: bottom;
+  display: block;
+  position: relative;
+  z-index: 1;
+  filter:
+    drop-shadow(0 0 20px rgba(150, 200, 255, 0.45))
+    drop-shadow(0 0 60px rgba(100, 160, 255, 0.20))
+    drop-shadow(0 20px 60px rgba(0, 0, 0, 0.45));
+  animation: charFloat 7s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes charFloat {
+  0%, 100% { transform: translateY(42px); }
+  50% { transform: translateY(28px); }
+}
+
+/* ===== スクロール誘導 ===== */
+.heroScroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: clamp(20px, 4vh, 40px);
+  animation: bounce 2s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+.heroScrollArrow {
+  font-size: 1.4rem;
+  color: rgba(150, 200, 255, 0.7);
+}
+
+.heroScrollText {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+/* ===== 週間スケジュールセクション ===== */
+.scheduleSection {
+  padding: clamp(40px, 8vh, 80px) clamp(16px, 4vw, 48px) clamp(60px, 10vh, 100px);
+  position: relative;
+}
+
+.scheduleSectionInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.scheduleSectionTitle {
+  margin: 0;
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: 0.08em;
+  text-align: center;
+  position: relative;
+  padding-bottom: 14px;
+}
+
+.scheduleSectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-primary), rgba(255, 211, 77, 0.8));
+  box-shadow: 0 0 12px rgba(150, 200, 255, 0.5);
+}
+
+.scheduleImageWrap {
+  width: 100%;
+}
+
+.scheduleImage {
   width: 100%;
   height: auto;
   max-height: min(78vh, 980px);
@@ -28,18 +299,58 @@
   background: linear-gradient(135deg, rgba(20, 28, 56, 0.9), rgba(10, 15, 30, 0.95));
 }
 
+/* ===== スマートフォン対応 ===== */
 @media (max-width: 768px) {
-  .heroSection {
-    padding: max(72px, 9vh) 10px 16px;
+  .heroInner {
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 8px;
+    padding-top: clamp(74px, 9vh, 108px);
+    padding-bottom: 10px;
   }
 
-  .heroImageWrap {
-    width: 100%;
-    margin-top: 8px;
+  .heroContent {
+    align-items: center;
+    text-align: center;
+    padding: 0 10px 24px;
+    max-width: 100%;
+    margin-left: 0;
+    margin-bottom: 0;
+    transform: translateY(-4px);
   }
 
-  .topHeroImage {
-    max-height: none;
+  .heroTagline {
+    padding-left: 0;
+  }
+
+  .heroTagline::before {
+    display: none;
+  }
+
+  .heroSub {
+    max-width: 100%;
+    font-size: clamp(0.98rem, 4.1vw, 1.08rem);
+  }
+
+  .heroButtons {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .heroCharWrap {
+    width: min(560px, 132vw);
+    align-self: center;
+    margin-left: 0;
+    margin-right: 0;
+    transform: translateX(0);
+  }
+
+  .heroChar {
+    max-height: 70vh;
+  }
+
+  .scheduleImage {
     border-radius: 16px;
   }
 }

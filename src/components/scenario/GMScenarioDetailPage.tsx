@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { BookOpenText } from 'lucide-react';
+import { Link, Undo2 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useData } from '../../lib/DataContext';
 import type { GMScenario } from 'types/database';
@@ -38,7 +38,8 @@ export function GMScenarioDetailPage() {
             onClick={() => navigate('/scenario?tab=gm-ready')}
             className={styles.backButton}
           >
-            GM可能シナリオ一覧に戻る
+            <Undo2 size={18} aria-hidden="true" />
+            GM可能一覧に戻る
           </button>
         </div>
       </main>
@@ -47,7 +48,7 @@ export function GMScenarioDetailPage() {
 
   return (
     <main className="commonPage">
-      <PageHero title="GM可能シナリオ詳細" />
+      <PageHero title="GM可能しなりお詳細" />
 
       <div className="commonContainer" style={{ paddingBottom: '40px' }}>
         <button
@@ -55,7 +56,8 @@ export function GMScenarioDetailPage() {
           onClick={() => navigate('/scenario?tab=gm-ready')}
           className={styles.backButton}
         >
-          ← 一覧に戻る
+          <Undo2 size={18} aria-hidden="true" />
+          一覧に戻る
         </button>
 
         <div className={styles.detailCard}>
@@ -85,7 +87,7 @@ export function GMScenarioDetailPage() {
                       aria-label="シナリオページを開く"
                       title="シナリオページ"
                     >
-                      <BookOpenText size={17} aria-hidden="true" />
+                      <Link size={17} aria-hidden="true" />
                     </a>
                   ) : (
                     <span
@@ -93,7 +95,7 @@ export function GMScenarioDetailPage() {
                       aria-label="シナリオページ未設定"
                       title="シナリオページ未設定"
                     >
-                      <BookOpenText size={17} aria-hidden="true" />
+                      <Link size={17} aria-hidden="true" />
                     </span>
                   )}
                 </div>
@@ -151,11 +153,12 @@ export function GMScenarioDetailPage() {
             </div>
 
             {/* 備考欄 */}
-            {scenario.notes && (
-              <div className={styles.notesSection}>
-                <p className={styles.notes}>{scenario.notes}</p>
+            <div className={styles.notesSection}>
+              <div className={styles.infoItem}>
+                <span className={styles.label}>備考：</span>
+                <p className={styles.notes}>{scenario.notes || '-'}</p>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

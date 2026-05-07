@@ -1,0 +1,104 @@
+
+.viewModeActionRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.mainViewButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(178, 220, 255, 0.52);
+  background: rgba(150, 205, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-small);
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mainViewButton:hover {
+  background: rgba(176, 220, 255, 0.3);
+  border-color: rgba(186, 230, 255, 0.74);
+  transform: translateY(-1px);
+}
+
+.mainViewButton:active {
+  transform: translateY(0);
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: var(--spacing-lg);
+}
+
+@media (max-width: 1320px) {
+  .cardGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  .cardGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .cardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+.emptyMessage {
+  text-align: center;
+  padding: 44px 16px;
+  color: rgba(220, 235, 255, 0.72);
+}
+
+.categoryTabContent {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.categoryTabIcon {
+  color: currentColor;
+  flex-shrink: 0;
+}
+
+.categoryTabLabel {
+  color: currentColor;
+}
+
+.serialNumber {
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.backButton {
+  margin-top: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(150, 200, 255, 0.45);
+  border-radius: var(--radius-small);
+  background: rgba(140, 185, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  background: rgba(160, 205, 255, 0.3);
+  border-color: rgba(160, 210, 255, 0.7);
+  transform: translateY(-1px);
+}

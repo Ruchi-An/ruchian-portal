@@ -228,18 +228,24 @@
 /* カードグリッド */
 .cardGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-md);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
   margin-top: var(--spacing-lg);
+}
+
+@media (max-width: 1320px) {
+  .cardGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 1024px) {
   .cardGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 760px) {
   .cardGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
@@ -262,6 +268,165 @@
   color: var(--text-muted);
 }
 
+.passedGridActionRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.passedGridButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(178, 220, 255, 0.52);
+  background: rgba(150, 205, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-small);
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.passedGridButton:hover {
+  background: rgba(176, 220, 255, 0.3);
+  border-color: rgba(186, 230, 255, 0.74);
+  transform: translateY(-1px);
+}
+
+.passedGridButton:active {
+  transform: translateY(0);
+}
+
+.passedCardGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: var(--spacing-lg);
+}
+
+.passedCard {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(180, 215, 255, 0.42);
+  background: linear-gradient(160deg, rgba(115, 180, 255, 0.40) 0%, rgba(180, 210, 255, 0.14) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    0 8px 20px rgba(10, 30, 80, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.48);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.passedCard:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 16px 30px rgba(10, 30, 80, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.passedCard:focus-visible {
+  outline: 2px solid rgba(255, 226, 122, 0.9);
+  outline-offset: 2px;
+}
+
+.passedCardImageWrap {
+  aspect-ratio: 1 / 1;
+  background: rgba(0, 0, 0, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.passedCardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.passedCardImagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: rgba(188, 213, 255, 0.7);
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+}
+
+.passedCardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(60, 100, 225, 0.5);
+  flex: 1;
+}
+
+.passedCardTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.passedCardTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(220, 235, 255, 0.95);
+  background: rgba(100, 150, 255, 0.25);
+  padding: 3px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(150, 200, 255, 0.3);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.passedCardTagIcon {
+  color: currentColor;
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.passedCardTagLabel {
+  color: currentColor;
+  line-height: 1;
+}
+
+.passedCardTitle {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.98);
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.4;
+  word-break: break-word;
+  flex: 1;
+}
+
+.passedCardDate {
+  margin: 0;
+  color: rgba(214, 230, 255, 0.92);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-top: auto;
+}
+
+.passedCardDivider {
+  width: 100%;
+  border-top: 1px solid rgba(150, 200, 255, 0.2);
+}
+
 .categoryTabContent {
   display: inline-flex;
   align-items: center;
@@ -279,5 +444,32 @@
 
 .serialNumber {
   color: rgba(255, 255, 255, 0.96);
+}
+
+@media (max-width: 1320px) {
+  .passedCardGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1080px) {
+  .passedCardGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .passedCardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .passedCardTitle {
+    font-size: 0.84rem;
+  }
+
+  .passedCardDate {
+    font-size: 0.76rem;
+  }
 }
 

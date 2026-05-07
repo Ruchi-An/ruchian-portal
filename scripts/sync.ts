@@ -3,7 +3,9 @@ import path from 'path';
 import matter from 'gray-matter';
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
+import sharp from 'sharp';
 import { v5 as uuidv5 } from 'uuid';
+import { fileURLToPath } from 'url';
 
 dotenv.config({ path: '.env.local' });
 
@@ -15,12 +17,25 @@ const supabase = createClient(
 const VAULT_PATH = process.env.VAULT_PATH!;
 const IMAGE_BUCKET = process.env.IMAGE_BUCKET ?? process.env.ENDCARD_BUCKET ?? 'images';
 const IMAGE_ASSET_DIR = process.env.IMAGE_ASSET_DIR ?? process.env.ENDCARD_ASSET_DIR;
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const WATERMARK_DIR = process.env.WATERMARK_DIR ?? SCRIPT_DIR;
+const WATERMARK_ENABLED = (process.env.WATERMARK_ENABLED ?? 'true').toLowerCase() !== 'false';
+const WATERMARK_SCALE = Number.parseFloat(process.env.WATERMARK_SCALE ?? '0.48');
+const WATERMARK_GAP_RATIO = Number.parseFloat(process.env.WATERMARK_GAP_RATIO ?? '0');
+const WATERMARK_OPACITY = Number.parseFloat(process.env.WATERMARK_OPACITY ?? '0.32');
+const WATERMARK_BLACK_FILE = process.env.WATERMARK_BLACK_FILE ?? 'wm-black.png';
+const WATERMARK_DARKGRAY_FILE = process.env.WATERMARK_DARKGRAY_FILE ?? 'wm-darkgray.png';
+const WATERMARK_LIGHTGRAY_FILE = process.env.WATERMARK_LIGHTGRAY_FILE ?? 'wm-lightgray.png';
+const WATERMARK_WHITE_FILE = process.env.WATERMARK_WHITE_FILE ?? 'wm-white.png';
 const CONTENT_NOTES_DIR = path.join(VAULT_PATH, '01_Contents');
 const EVENT_NOTES_DIR = path.join(VAULT_PATH, '02_Events');
 const DAY_NOTES_DIR = path.join(VAULT_PATH, '03_Days');
 
 let vaultFileIndex: Map<string, string[]> | null = null;
 let imageBucketReady = false;
+const watermarkPathCache = new Map<string, string | null>();
+
+type WatermarkVariant = 'black' | 'darkgray' | 'lightgray' | 'white';
 
 // UUID v5 namespace for generating deterministic IDs from filenames
 const NAMESPACE_UUID = 'c3a6d8e0-8b4a-4f3e-9d2c-1a5b7c9e0f1a';
@@ -147,6 +162,130 @@ function makeSafeStorageFileName(originalFileName: string): string {
   return `${safeBase}${ext}`;
 }
 
+function resolveWatermarkPath(variant: WatermarkVariant): string | null {
+  const cached = watermarkPathCache.get(variant);
+  if (cached !== undefined) return cached;
+
+  const fileName = (() => {
+    if (variant === 'black') return WATERMARK_BLACK_FILE;
+    if (variant === 'darkgray') return WATERMARK_DARKGRAY_FILE;
+    if (variant === 'lightgray') return WATERMARK_LIGHTGRAY_FILE;
+    return WATERMARK_WHITE_FILE;
+  })();
+
+  const candidate = path.resolve(WATERMARK_DIR, fileName);
+  const resolved = fs.existsSync(candidate) ? candidate : null;
+  watermarkPathCache.set(variant, resolved);
+  return resolved;
+}
+
+function selectWatermarkVariant(meanBrightness: number): WatermarkVariant {
+  if (meanBrightness >= 190) return 'black';
+  if (meanBrightness >= 140) return 'darkgray';
+  if (meanBrightness >= 90) return 'lightgray';
+  return 'white';
+}
+
+function isWatermarkTargetContentType(contentType: string): boolean {
+  return ['image/png', 'image/jpeg', 'image/webp', 'image/avif'].includes(contentType);
+}
+
+async function applyWatermark(buffer: Buffer, contentType: string): Promise<Buffer> {
+  if (!WATERMARK_ENABLED || !isWatermarkTargetContentType(contentType)) {
+    return buffer;
+  }
+
+  try {
+    const baseImage = sharp(buffer, { failOn: 'none' });
+    const [metadata, stats] = await Promise.all([baseImage.metadata(), baseImage.stats()]);
+    const width = metadata.width;
+    const height = metadata.height;
+
+    if (!width || !height) {
+      return buffer;
+    }
+
+    const rgbChannels = stats.channels.slice(0, 3);
+    if (rgbChannels.length === 0) {
+      return buffer;
+    }
+
+    const meanBrightness = rgbChannels.reduce((sum, channel) => sum + channel.mean, 0) / rgbChannels.length;
+    const variant = selectWatermarkVariant(meanBrightness);
+    const watermarkPath = resolveWatermarkPath(variant);
+
+    if (!watermarkPath) {
+      console.warn(`⚠️  watermark file not found for variant '${variant}' in ${WATERMARK_DIR}`);
+      return buffer;
+    }
+
+    const tileMaxSize = Math.max(220, Math.round(Math.min(width, height) * WATERMARK_SCALE));
+    const tileBuffer = await sharp(watermarkPath, { failOn: 'none' })
+      .resize({ width: tileMaxSize, height: tileMaxSize, fit: 'inside', withoutEnlargement: false })
+      .png()
+      .toBuffer();
+
+    const tileWithOpacityBuffer = await applyOpacityToPngBuffer(tileBuffer, WATERMARK_OPACITY);
+    const tileMeta = await sharp(tileWithOpacityBuffer).metadata();
+    const tileWidth = tileMeta.width ?? tileMaxSize;
+    const tileHeight = tileMeta.height ?? tileMaxSize;
+    const gapRatio = Math.max(0, WATERMARK_GAP_RATIO);
+    const gapX = Math.round(tileWidth * gapRatio);
+    const gapY = Math.round(tileHeight * gapRatio);
+
+    const composites: sharp.OverlayOptions[] = [];
+    for (let top = 0; top < height; top += tileHeight + gapY) {
+      for (let left = 0; left < width; left += tileWidth + gapX) {
+        composites.push({ input: tileWithOpacityBuffer, left, top });
+      }
+    }
+
+    const composed = sharp(buffer, { failOn: 'none' }).composite(composites);
+
+    if (contentType === 'image/png') return composed.png().toBuffer();
+    if (contentType === 'image/webp') return composed.webp({ quality: 96 }).toBuffer();
+    if (contentType === 'image/avif') return composed.avif({ quality: 82 }).toBuffer();
+    return composed.jpeg({ quality: 96 }).toBuffer();
+  } catch (error) {
+    console.warn('⚠️  watermark skipped due to processing error', error);
+    return buffer;
+  }
+}
+
+async function applyOpacityToPngBuffer(buffer: Buffer, opacity: number): Promise<Buffer> {
+  const normalizedOpacity = Math.max(0, Math.min(1, opacity));
+  if (normalizedOpacity >= 1) return buffer;
+
+  const { data, info } = await sharp(buffer)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  for (let index = 3; index < data.length; index += info.channels) {
+    data[index] = Math.round(data[index] * normalizedOpacity);
+  }
+
+  return sharp(data, {
+    raw: {
+      width: info.width,
+      height: info.height,
+      channels: info.channels,
+    },
+  }).png().toBuffer();
+}
+
+async function maybeApplyWatermarkToImage(
+  rawBuffer: Buffer,
+  contentType: string,
+  fieldName: 'endcard_image' | 'trailer_image' | 'thumbnail_image',
+): Promise<Buffer> {
+  if (fieldName !== 'thumbnail_image') {
+    return rawBuffer;
+  }
+
+  return applyWatermark(rawBuffer, contentType);
+}
+
 function looksLikeFileRef(value: string): boolean {
   return /\.(png|jpe?g|webp|gif|svg|avif)$/i.test(value.trim());
 }
@@ -232,11 +371,12 @@ async function resolveImageValue(
     return trimmed;
   }
 
-  const fileBuffer = fs.readFileSync(localPath);
+  const rawFileBuffer = fs.readFileSync(localPath);
   const fileName = path.basename(localPath);
   const safeStorageFileName = makeSafeStorageFileName(fileName);
   const storagePath = `${storagePathPrefix}/${safeStorageFileName}`;
   const contentType = detectContentType(localPath);
+  const fileBuffer = await maybeApplyWatermarkToImage(rawFileBuffer, contentType, fieldName);
 
   const bucketReady = await ensureImageBucket();
   if (!bucketReady) {
