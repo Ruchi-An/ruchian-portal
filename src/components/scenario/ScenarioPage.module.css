@@ -345,8 +345,11 @@
 }
 
 .passedCardImage {
-  width: 100%;
-  height: 100%;
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   object-position: center;
 }
@@ -459,14 +462,33 @@
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .passedCardGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
   }
 
-  .passedCardImage {
-    object-position: center;
+  .passedCard {
+    border-radius: 10px;
+  }
+
+  .passedCardImageWrap {
+    aspect-ratio: 1 / 1;
+  }
+
+  .passedCardBody {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .passedCardTags {
+    gap: 4px;
+  }
+
+  .passedCardTag {
+    font-size: 0.7rem;
+    padding: 2px 7px;
+    border-radius: 7px;
   }
 
   .passedCardTitle {
@@ -475,6 +497,41 @@
 
   .passedCardDate {
     font-size: 0.76rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .passedCard {
+    border-radius: 8px;
+  }
+
+  .passedCardImageWrap {
+    aspect-ratio: 1 / 1;
+    padding: 6px;
+  }
+
+  .passedCardBody {
+    padding: 10px;
+    gap: 7px;
+  }
+
+  .passedCardTitle {
+    font-size: 0.82rem;
+  }
+
+  .passedCardTag {
+    font-size: 0.58rem;
+    padding: 2px 5px;
+    border-radius: 6px;
+    gap: 3px;
+  }
+
+  .passedCardTags {
+    gap: 3px;
+  }
+
+  .passedCardDate {
+    font-size: clamp(0.62rem, 2.5vw, 0.74rem);
   }
 }
 

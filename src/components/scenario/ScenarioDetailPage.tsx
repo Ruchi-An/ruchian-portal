@@ -288,13 +288,11 @@ export function ScenarioDetailPage() {
             </div>
           </div>
 
-          <div className={styles.cardImage} onClick={() => detailImageUrl && setShowImageModal(true)}>
-            {detailImageUrl ? (
+          {detailImageUrl && (
+            <div className={styles.cardImage} onClick={() => setShowImageModal(true)}>
               <img src={detailImageUrl} alt={scenario.title} />
-            ) : (
-              <div className={styles.imagePlaceholder}>画像なし</div>
-            )}
-          </div>
+            </div>
+          )}
 
           <div className={styles.cardContent}>
             <div className={styles.contentColumns}>

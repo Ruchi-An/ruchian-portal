@@ -186,11 +186,13 @@ function PassedScenarioCard({ card, passNumber, dateLabel, onOpen }: PassedScena
       onClick={() => onOpen(card)}
       onKeyDown={(event) => toggleWithKeyboard(event, () => onOpen(card))}
     >
-      {card.endcardImageUrl && (
-        <div className={styles.passedCardImageWrap}>
+      <div className={styles.passedCardImageWrap}>
+        {card.endcardImageUrl ? (
           <img src={card.endcardImageUrl} alt={card.title} className={styles.passedCardImage} />
-        </div>
-      )}
+        ) : (
+          <div className={styles.passedCardImagePlaceholder}>画像なし</div>
+        )}
+      </div>
       <div className={styles.passedCardBody}>
         <div className={styles.passedCardTags}>
           <span className={styles.passedCardTag}>#{passNumber}</span>
