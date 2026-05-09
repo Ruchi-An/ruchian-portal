@@ -129,6 +129,13 @@ export function ScenarioDetailPage() {
   }, [activeTab, currentIndex, passedCards.length, scenario, visibleCards.length]);
 
   const displayTitle = passNumber ? `No.${passNumber}｜${scenario?.title ?? ''}` : (scenario?.title ?? '');
+  const detailImageUrl = useMemo(() => {
+    if (!scenario) return null;
+    if (activeTab === 'planned') {
+      return scenario.thumbnailImageUrl ?? scenario.endcardImageUrl ?? null;
+    }
+    return scenario.endcardImageUrl ?? scenario.thumbnailImageUrl ?? null;
+  }, [activeTab, scenario]);
 
   const backTarget = location.search ? `/scenario${location.search}` : '/scenario?tab=passed';
   const hasGmMembers = Boolean(scenario?.gmst?.length);
@@ -263,9 +270,9 @@ export function ScenarioDetailPage() {
             </div>
           </div>
 
-          <div className={styles.cardImage} onClick={() => scenario.endcardImageUrl && setShowImageModal(true)}>
-            {scenario.endcardImageUrl ? (
-              <img src={scenario.endcardImageUrl} alt={scenario.title} />
+          <div className={styles.cardImage} onClick={() => detailImageUrl && setShowImageModal(true)}>
+            {detailImageUrl ? (
+              <img src={detailImageUrl} alt={scenario.title} />
             ) : (
               <div className={styles.imagePlaceholder}>画像なし</div>
             )}
@@ -343,10 +350,10 @@ export function ScenarioDetailPage() {
 
       </div>
 
-      {showImageModal && scenario.endcardImageUrl && (
+      {showImageModal && detailImageUrl && (
         <div className={styles.imageModal} onClick={() => setShowImageModal(false)}>
           <img
-            src={scenario.endcardImageUrl}
+            src={detailImageUrl}
             alt={scenario.title}
             className={styles.imageModalContent}
           />

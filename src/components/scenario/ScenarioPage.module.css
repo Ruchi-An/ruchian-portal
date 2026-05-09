@@ -464,6 +464,10 @@
     gap: 10px;
   }
 
+  .passedCardImage {
+    object-position: center;
+  }
+
   .passedCardTitle {
     font-size: 0.84rem;
   }

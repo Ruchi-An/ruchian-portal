@@ -121,6 +121,7 @@ export type PassedScenario = {
   pl?: string[];
   scenarioUrl?: string;
   streamUrl?: string;
+  thumbnailImageUrl?: string;
   endcardImageUrl?: string;
   displayPassNumber?: number;
 };
@@ -244,6 +245,7 @@ export function toPassedScenario(schedule: ScheduleData, scenario: ScenarioInfo)
     pl: schedule.members ?? [],
     scenarioUrl: scenario.officialUrl ?? undefined,
     streamUrl: schedule.streamUrl ?? undefined,
+    thumbnailImageUrl: schedule.thumbnailImage ?? undefined,
     endcardImageUrl: schedule.endcardImage ?? undefined,
   };
 }

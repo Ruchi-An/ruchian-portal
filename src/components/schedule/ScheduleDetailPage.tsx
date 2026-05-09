@@ -65,6 +65,14 @@ function compareScheduleOrder(a: ScheduleData, b: ScheduleData, viewMode: ViewMo
   return getStartMinutes(a.startTime) - getStartMinutes(b.startTime);
 }
 
+function splitMemberNames(value?: string | null): string[] {
+  if (!value) return [];
+  return value
+    .split(/[\n,、，/／]+/)
+    .map((name) => name.trim())
+    .filter(Boolean);
+}
+
 export function ScheduleDetailPage() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
@@ -112,8 +120,37 @@ export function ScheduleDetailPage() {
 
   const backTarget = location.search ? `/schedule${location.search}` : '/schedule';
   const title = schedule ? formatTitle(schedule) : '-';
-  const members = schedule?.members?.filter(Boolean) ?? [];
+  const baseMembers = schedule?.members?.filter(Boolean) ?? [];
+  const isScenario = schedule?.contentType === 'scenario';
+  const isPassedScenario = Boolean(
+    isScenario
+    && schedule
+    && (schedule.status === 'done' || (schedule.date ? schedule.date < todayKey : false)),
+  );
+  const members = useMemo(() => {
+    if (!schedule) return [];
+    if (schedule.contentType !== 'scenario') return baseMembers;
+
+    const gmstMembers = splitMemberNames(schedule.gmstName);
+    return Array.from(new Set([...gmstMembers, ...baseMembers]));
+  }, [baseMembers, schedule]);
   const hasMembers = members.length > 0;
+  const scenarioDetailTarget = useMemo(() => {
+    if (!schedule || schedule.contentType !== 'scenario' || !schedule.contentId) return null;
+    const tab = isPassedScenario ? 'passed' : 'planned';
+    const scenarioDetailId = `${schedule.id}:${schedule.contentId}`;
+    return `/scenario/detail/${encodeURIComponent(scenarioDetailId)}?tab=${tab}`;
+  }, [isPassedScenario, schedule]);
+  const displayImage = useMemo(() => {
+    if (!schedule) return null;
+    if (schedule.contentType !== 'scenario') {
+      return schedule.thumbnailImage ?? schedule.endcardImage ?? null;
+    }
+    if (isPassedScenario) {
+      return schedule.endcardImage ?? schedule.thumbnailImage ?? null;
+    }
+    return schedule.thumbnailImage ?? schedule.endcardImage ?? null;
+  }, [isPassedScenario, schedule]);
   const titleIcon = schedule?.contentType === 'game' ? Gamepad2 : BookOpenText;
   const TitleIcon = titleIcon;
   const handleMoveSchedule = (scheduleId: string | null) => {
@@ -228,11 +265,21 @@ export function ScheduleDetailPage() {
                 )}
               </div>
             </div>
+
+            {scenarioDetailTarget && (
+              <button
+                type="button"
+                onClick={() => navigate(scenarioDetailTarget)}
+                className={styles.scenarioDetailButton}
+              >
+                しなりお詳細を見る
+              </button>
+            )}
           </div>
 
-          <div className={styles.cardImage} onClick={() => schedule.thumbnailImage && setShowImageModal(true)}>
-            {schedule.thumbnailImage ? (
-              <img src={schedule.thumbnailImage} alt={title} />
+          <div className={styles.cardImage} onClick={() => displayImage && setShowImageModal(true)}>
+            {displayImage ? (
+              <img src={displayImage} alt={title} />
             ) : (
               <div className={styles.imagePlaceholder}>画像なし</div>
             )}
@@ -277,10 +324,10 @@ export function ScheduleDetailPage() {
         </div>
       </div>
 
-      {showImageModal && schedule.thumbnailImage && (
+      {showImageModal && displayImage && (
         <div className={styles.imageModal} onClick={() => setShowImageModal(false)}>
           <img
-            src={schedule.thumbnailImage}
+            src={displayImage}
             alt={title}
             className={styles.imageModalContent}
           />
