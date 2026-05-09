@@ -32,6 +32,7 @@ const SOCIAL_LINKS = [
 
 export default function HomePage() {
   const [scheduleSrc, setScheduleSrc] = useState(WEEKLY_SCHEDULE_IMAGE);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
   return (
     <>
@@ -87,19 +88,49 @@ export default function HomePage() {
         <div className={styles.scheduleSectionInner}>
           <h2 className={styles.scheduleSectionTitle}>今週のスケジュール</h2>
           <div className={styles.scheduleImageWrap}>
-            <img
-              src={scheduleSrc}
-              alt="今週の週間スケジュール"
-              className={styles.scheduleImage}
-              onError={() => {
-                if (scheduleSrc !== FALLBACK_IMAGE) {
-                  setScheduleSrc(FALLBACK_IMAGE);
-                }
-              }}
-            />
+            <button
+              type="button"
+              className={styles.scheduleImageButton}
+              onClick={() => setIsScheduleModalOpen(true)}
+              aria-label="今週のスケジュール画像を拡大表示"
+            >
+              <img
+                src={scheduleSrc}
+                alt="今週の週間スケジュール"
+                className={styles.scheduleImage}
+                onError={() => {
+                  if (scheduleSrc !== FALLBACK_IMAGE) {
+                    setScheduleSrc(FALLBACK_IMAGE);
+                  }
+                }}
+              />
+            </button>
           </div>
         </div>
       </section>
+
+      {isScheduleModalOpen && (
+        <div
+          className={styles.scheduleImageModal}
+          onClick={() => setIsScheduleModalOpen(false)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              setIsScheduleModalOpen(false);
+            }
+          }}
+          aria-label="拡大スケジュール画像を閉じる"
+        >
+          <img
+            src={scheduleSrc}
+            alt="今週の週間スケジュール（拡大）"
+            className={styles.scheduleImageModalContent}
+            onClick={(event) => event.stopPropagation()}
+          />
+        </div>
+      )}
 
       <Footer />
     </>
