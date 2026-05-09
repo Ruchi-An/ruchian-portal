@@ -131,11 +131,29 @@ export function ScenarioDetailPage() {
   const displayTitle = passNumber ? `No.${passNumber}｜${scenario?.title ?? ''}` : (scenario?.title ?? '');
   const detailImageUrl = useMemo(() => {
     if (!scenario) return null;
-    if (activeTab === 'planned') {
-      return scenario.thumbnailImageUrl ?? scenario.endcardImageUrl ?? null;
+
+    // 通過日で画像を切り替え
+    if (scenario.date) {
+      const today = new Date();
+      const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const scenarioDate = parseDateKey(scenario.date);
+
+      if (scenarioDate) {
+        const isPastOrToday = scenarioDate.getTime() <= todayStart.getTime();
+
+        if (isPastOrToday) {
+          // 通過済み（今日以前）：エンドカードのみ
+          return scenario.endcardImageUrl ?? null;
+        } else {
+          // 通過予定（今日より後）：サムネイルのみ
+          return scenario.thumbnailImageUrl ?? null;
+        }
+      }
     }
-    return scenario.endcardImageUrl ?? scenario.thumbnailImageUrl ?? null;
-  }, [activeTab, scenario]);
+
+    // 日付がない場合はサムネイル
+    return scenario.thumbnailImageUrl ?? null;
+  }, [scenario]);
 
   const backTarget = location.search ? `/scenario${location.search}` : '/scenario?tab=passed';
   const hasGmMembers = Boolean(scenario?.gmst?.length);
