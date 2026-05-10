@@ -143,14 +143,8 @@ export function ScheduleDetailPage() {
   }, [isPassedScenario, schedule]);
   const displayImage = useMemo(() => {
     if (!schedule) return null;
-    if (schedule.contentType !== 'scenario') {
-      return schedule.thumbnailImage ?? schedule.endcardImage ?? null;
-    }
-    if (isPassedScenario) {
-      return schedule.endcardImage ?? schedule.thumbnailImage ?? null;
-    }
-    return schedule.thumbnailImage ?? schedule.endcardImage ?? null;
-  }, [isPassedScenario, schedule]);
+    return schedule.thumbnailImage ?? null;
+  }, [schedule]);
   const titleIcon = schedule?.contentType === 'game' ? Gamepad2 : BookOpenText;
   const TitleIcon = titleIcon;
   const handleMoveSchedule = (scheduleId: string | null) => {

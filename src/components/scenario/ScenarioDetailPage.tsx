@@ -139,14 +139,14 @@ export function ScenarioDetailPage() {
       const scenarioDate = parseDateKey(scenario.date);
 
       if (scenarioDate) {
-        const isPastOrToday = scenarioDate.getTime() <= todayStart.getTime();
+        const isBeforeOrOnPassDate = scenarioDate.getTime() >= todayStart.getTime();
 
-        if (isPastOrToday) {
-          // 通過済み（今日以前）：エンドカードのみ
-          return scenario.endcardImageUrl ?? null;
-        } else {
-          // 通過予定（今日より後）：サムネイルのみ
+        if (isBeforeOrOnPassDate) {
+          // 通過日以前（今日を含む）：サムネイルのみ
           return scenario.thumbnailImageUrl ?? null;
+        } else {
+          // 通過日を超えたもの：エンドカードのみ
+          return scenario.endcardImageUrl ?? null;
         }
       }
     }
@@ -288,11 +288,13 @@ export function ScenarioDetailPage() {
             </div>
           </div>
 
-          {detailImageUrl && (
-            <div className={styles.cardImage} onClick={() => setShowImageModal(true)}>
+          <div className={styles.cardImage} onClick={() => detailImageUrl && setShowImageModal(true)}>
+            {detailImageUrl ? (
               <img src={detailImageUrl} alt={scenario.title} />
-            </div>
-          )}
+            ) : (
+              <div className={styles.imagePlaceholder}>画像なし</div>
+            )}
+          </div>
 
           <div className={styles.cardContent}>
             <div className={styles.contentColumns}>
